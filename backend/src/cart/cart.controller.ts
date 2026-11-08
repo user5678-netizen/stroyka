@@ -82,11 +82,11 @@ export class CartController {
   }
 
   @Delete('items/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove item from cart' })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Item removed successfully',
+    type: CartResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Item not found in cart' })
   async removeItem(
@@ -112,11 +112,11 @@ export class CartController {
   }
 
   @Delete('remove-promo')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove promo code from cart' })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Promo code removed successfully',
+    type: CartResponseDto,
   })
   async removePromo(
     @Req() req: { user: { id: string } },

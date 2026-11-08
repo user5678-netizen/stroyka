@@ -6,10 +6,10 @@ import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CartModule } from './cart/cart.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import { redisStore } from 'cache-manager-ioredis';
-import { CloudinaryService } from './shared/services/cloudinary.service';
+
 import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
+import { HealthModule } from './health/health.module';
+import { BootstrapModule } from './shared/bootstrap.module';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
         DB_NAME: Joi.string().required(),
         REDIS_HOST: Joi.string().default('localhost'),
         REDIS_PORT: Joi.number().default(6379),
-        REDIS_PASSWORD: Joi.string().optional(),
+        REDIS_PASSWORD: Joi.string().allow('').optional(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().default('86400s'),
         CLOUDINARY_CLOUD_NAME: Joi.string().required(),
@@ -56,18 +56,6 @@ import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
       }),
       inject: [ConfigService],
     }),
-    CacheModule.registerAsync({
-      isGlobal: true,
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        store: redisStore,
-        host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
-        password: configService.get('REDIS_PASSWORD'),
-        ttl: 120, // 120 seconds cache TTL
-      }),
-      inject: [ConfigService],
-    }),
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute
@@ -77,9 +65,11 @@ import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
     AuthModule,
     ProductsModule,
     CartModule,
+    HealthModule,
+    BootstrapModule,
   ],
-  providers: [CloudinaryService],
-  exports: [CloudinaryService],
+  providers: [],
+  exports: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

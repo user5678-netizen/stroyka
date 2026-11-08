@@ -1,13 +1,8 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like, Between, ILike } from 'typeorm';
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER, Inject } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { Product } from '../shared/entities/product.entity';
+import { CartItem } from '../shared/entities/cart-item.entity';
 import {
   GetProductsQueryDto,
   CreateProductDto,
@@ -16,17 +11,17 @@ import {
   SortBy,
   SortOrder,
 } from './dto/products.dto';
-import { User, UserRole } from '../shared/entities/user.entity';
-import { CloudinaryService } from '../shared/services/cloudinary.service';
-import { CreateProductWithFilesDto } from './dto/create-product-with-files.dto';
+import { User } from '../shared/entities/user.entity';
+import { CatalogCacheService } from '../shared/services/catalog-cache.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private cloudinaryService: CloudinaryService,
+    @InjectRepository(CartItem)
+    private cartItemRepository: Repository<CartItem>,
+    private catalogCache: CatalogCacheService,
   ) {}
 
   async findAll(
@@ -43,50 +38,58 @@ export class ProductsService {
       order = SortOrder.ASC,
     } = query;
 
-    // Create cache key based on query parameters
-    const cacheKey = `products:${JSON.stringify(query)}`;
+    const cacheKey = this.catalogCache.buildKey({
+      page,
+      limit,
+      search,
+      min_price,
+      max_price,
+      min_rating,
+      sort_by,
+      order,
+    });
 
-    // Try to get from cache
-    const cached = await this.cacheManager.get<PaginatedProductsResponseDto>(
-      cacheKey,
-    );
+    const cached = await this.catalogCache.get<PaginatedProductsResponseDto>(cacheKey);
     if (cached) {
       return cached;
     }
 
-    // Build query
-    const where: any = {};
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
 
     if (search) {
-      where.title = ILike(`%${search}%`);
-    }
-
-    if (min_price !== undefined || max_price !== undefined) {
-      where.price = Between(
-        min_price || 0,
-        max_price || Number.MAX_SAFE_INTEGER,
+      const escaped = search.replace(/[\\%_]/g, '\\$&');
+      queryBuilder.andWhere(
+        "(product.title ILIKE :search ESCAPE '\\' OR product.description ILIKE :search ESCAPE '\\')",
+        { search: `%${escaped}%` },
       );
     }
 
-    if (min_rating !== undefined) {
-      where.rating = Between(min_rating, 5);
+    if (min_price !== undefined) {
+      queryBuilder.andWhere('product.price >= :minPrice', { minPrice: min_price });
     }
 
-    // Calculate skip
-    const skip = (page - 1) * limit;
+    if (max_price !== undefined) {
+      queryBuilder.andWhere('product.price <= :maxPrice', { maxPrice: max_price });
+    }
+
+    if (min_rating !== undefined) {
+      queryBuilder.andWhere('product.rating >= :minRating', {
+        minRating: min_rating,
+      });
+    }
+
+    const sortColumn = sort_by === SortBy.PRICE ? 'product.price' : 'product.title';
+    queryBuilder.orderBy(sortColumn, order === SortOrder.DESC ? 'DESC' : 'ASC');
 
     // Get total count
-    const total_items = await this.productRepository.count({ where });
+    const total_items = await queryBuilder.getCount();
 
-    // Get products with sorting
-    const [products, count] = await this.productRepository.findAndCount({
-      where,
-      order: {
-        [sort_by]: order,
-      },
-      skip,
-      take: limit,
-    });
+    // Add pagination
+    const skip = (page - 1) * limit;
+    queryBuilder.skip(skip).take(limit);
+
+    // Get products
+    const products = await queryBuilder.getMany();
 
     const response: PaginatedProductsResponseDto = {
       items: products.map((product) => ({
@@ -107,8 +110,7 @@ export class ProductsService {
       },
     };
 
-    // Cache the result (TTL: 120 seconds)
-    await this.cacheManager.set(cacheKey, response, 120);
+    await this.catalogCache.set(cacheKey, response, 120);
 
     return response;
   }
@@ -127,10 +129,7 @@ export class ProductsService {
   ): Promise<Product> {
     const product = this.productRepository.create(createProductDto);
     await this.productRepository.save(product);
-
-    // Invalidate products cache
-    await this.invalidateProductsCache();
-
+    await this.catalogCache.invalidateCatalog();
     return product;
   }
 
@@ -143,26 +142,14 @@ export class ProductsService {
 
     Object.assign(product, updateProductDto);
     await this.productRepository.save(product);
-
-    // Invalidate products cache
-    await this.invalidateProductsCache();
-
+    await this.catalogCache.invalidateCatalog();
     return product;
   }
 
   async delete(id: string, user: User): Promise<void> {
-    const product = await this.findOne(id);
-    await this.productRepository.remove(product);
-
-    // Invalidate products cache
-    await this.invalidateProductsCache();
-  }
-
-  private async invalidateProductsCache(): Promise<void> {
-    // Get all cache keys starting with 'products:'
-    const keys = await this.cacheManager.store.keys?.('products:*');
-    if (keys?.length) {
-      await Promise.all(keys.map((key) => this.cacheManager.del(key)));
-    }
+    await this.findOne(id);
+    await this.cartItemRepository.delete({ product_id: id });
+    await this.productRepository.delete(id);
+    await this.catalogCache.invalidateCatalog();
   }
 }

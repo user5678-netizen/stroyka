@@ -2,6 +2,7 @@ import {
   IsString,
   IsNumber,
   IsArray,
+  ArrayMinSize,
   IsOptional,
   Min,
   Max,
@@ -93,6 +94,7 @@ export class CreateProductDto {
 
   @ApiProperty({ type: [String], minItems: 3 })
   @IsArray()
+  @ArrayMinSize(3)
   @IsString({ each: true })
   images: string[];
 
@@ -129,6 +131,7 @@ export class UpdateProductDto {
   @ApiPropertyOptional({ type: [String], minItems: 3 })
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(3)
   @IsString({ each: true })
   images?: string[];
 

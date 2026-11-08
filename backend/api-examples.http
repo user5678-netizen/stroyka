@@ -1,0 +1,72 @@
+### API Examples for Stroyka Backend
+
+### 1. Register new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 2. Login user
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### 3. Get products with filtering (no auth required)
+GET http://localhost:3000/api/products?page=1&limit=10&min_price=10&max_price=1000&sort_by=price&order=desc
+
+### 4. Get single product
+GET http://localhost:3000/api/products/123e4567-e89b-12d3-a456-426614174000
+
+### 5. Create product (admin only - need JWT token)
+POST http://localhost:3000/api/products
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Молоток строительный",
+  "description": "Профессиональный молоток для строительных работ",
+  "price": 2499.99,
+  "rating": 4.5,
+  "images": [
+    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer1.jpg",
+    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer2.jpg",
+    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer3.jpg"
+  ],
+  "stock_quantity": 100
+}
+
+### 6. Get user cart (requires auth)
+GET http://localhost:3000/api/cart
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 7. Add item to cart
+POST http://localhost:3000/api/cart/items
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "product_id": "123e4567-e89b-12d3-a456-426614174000",
+  "quantity": 2
+}
+
+### 8. Apply promo code
+POST http://localhost:3000/api/cart/apply-promo
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "code": "SAVE10"
+}
+
+### 9. Health check
+GET http://localhost:3000/health
+
+### 10. Swagger documentation
+GET http://localhost:3000/api-docs

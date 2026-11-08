@@ -48,10 +48,8 @@ export class CartService {
       }
 
       cart = this.cartRepository.create({
-        user,
         user_id: userId,
         items: [],
-        promo_code: null,
         discount_amount: 0,
       });
 
@@ -82,16 +80,17 @@ export class CartService {
       throw new NotFoundException('Product not found');
     }
 
-    if (product.stock_quantity < quantity) {
+    const existing = cart.items.find((item) => item.product_id === product_id);
+    const nextQuantity = (existing?.quantity ?? 0) + quantity;
+
+    if (product.stock_quantity < nextQuantity) {
       throw new BadRequestException('Insufficient stock');
     }
 
-    // Check if item already exists in cart
-    let cartItem = cart.items.find((item) => item.product_id === product_id);
+    let cartItem = existing;
 
     if (cartItem) {
-      // Update quantity
-      cartItem.quantity += quantity;
+      cartItem.quantity = nextQuantity;
     } else {
       // Create new item
       cartItem = this.cartItemRepository.create({
@@ -105,9 +104,10 @@ export class CartService {
     }
 
     await this.cartItemRepository.save(cartItem);
+    await this.syncDiscount(cart);
     await this.cartRepository.save(cart);
 
-    return this.mapCartToResponse(cart);
+    return this.getCart(userId);
   }
 
   async updateItem(
@@ -132,9 +132,10 @@ export class CartService {
 
     cartItem.quantity = quantity;
     await this.cartItemRepository.save(cartItem);
+    await this.syncDiscount(cart);
     await this.cartRepository.save(cart);
 
-    return this.mapCartToResponse(cart);
+    return this.getCart(userId);
   }
 
   async removeItem(
@@ -153,10 +154,10 @@ export class CartService {
     // Remove item
     await this.cartItemRepository.remove(cart.items[itemIndex]);
     cart.items.splice(itemIndex, 1);
-
+    await this.syncDiscount(cart);
     await this.cartRepository.save(cart);
 
-    return this.mapCartToResponse(cart);
+    return this.getCart(userId);
   }
 
   async clearCart(userId: string): Promise<void> {
@@ -176,7 +177,7 @@ export class CartService {
     applyPromoDto: ApplyPromoDto,
   ): Promise<CartResponseDto> {
     const cart = await this.getOrCreateCart(userId);
-    const { code } = applyPromoDto;
+    const code = applyPromoDto.code.trim().toUpperCase();
 
     // Check if cart is empty
     if (cart.items.length === 0) {
@@ -193,15 +194,11 @@ export class CartService {
     }
 
     // Calculate discount
-    const subtotal = cart.calculateTotal();
-    const discountAmount = (subtotal * promoCode.discount_percentage) / 100;
-
     cart.promo_code = code;
-    cart.discount_amount = discountAmount;
-
+    await this.syncDiscount(cart);
     await this.cartRepository.save(cart);
 
-    return this.mapCartToResponse(cart);
+    return this.getCart(userId);
   }
 
   async removePromo(userId: string): Promise<CartResponseDto> {
@@ -215,12 +212,36 @@ export class CartService {
     return this.mapCartToResponse(cart);
   }
 
-  private mapCartToResponse(cart: Cart): CartResponseDto {
+  private async syncDiscount(cart: Cart): Promise<void> {
+    if (!cart.promo_code || cart.items.length === 0) {
+      cart.promo_code = null;
+      cart.discount_amount = 0;
+      return;
+    }
+
+    const promoCode = await this.promoCodeRepository.findOne({
+      where: { code: cart.promo_code, is_active: true },
+    });
+
+    if (!promoCode) {
+      cart.promo_code = null;
+      cart.discount_amount = 0;
+      return;
+    }
+
     const subtotal = cart.calculateTotal();
+    const percent = Number(promoCode.discount_percentage);
+    cart.discount_amount = Math.round(((subtotal * percent) / 100) * 100) / 100;
+  }
+
+  private mapCartToResponse(cart: Cart): CartResponseDto {
+    const subtotal = Math.round(cart.calculateTotal() * 100) / 100;
+    const discountAmount = Number(cart.discount_amount) || 0;
     const total = cart.calculateTotalWithDiscount();
-    const discountPercentage = cart.discount_amount > 0 
-      ? (cart.discount_amount / subtotal) * 100 
-      : 0;
+    const discountPercentage =
+      discountAmount > 0 && subtotal > 0
+        ? Math.round((discountAmount / subtotal) * 10000) / 100
+        : 0;
 
     return {
       id: cart.id,
@@ -237,7 +258,7 @@ export class CartService {
       })),
       subtotal,
       promo_code: cart.promo_code,
-      discount_amount: cart.discount_amount,
+      discount_amount: discountAmount,
       discount_percentage: Math.round(discountPercentage * 100) / 100,
       total,
       created_at: cart.created_at,

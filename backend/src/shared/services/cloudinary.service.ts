@@ -19,7 +19,7 @@ export class CloudinaryService {
         {
           folder: 'stroyka/products',
         },
-        (error, result) => {
+        (error: any, result: any) => {
           if (error) {
             reject(error);
           } else {

@@ -1,33 +1,29 @@
-# Build stage
-FROM node:20-alpine AS builder
-
+FROM node:20-bookworm-slim AS deps
 WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+RUN npm ci
 
-COPY package*.json ./
-RUN npm ci --only=production
-
+FROM deps AS build
 COPY . .
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine
-
+FROM node:20-bookworm-slim AS development
 WORKDIR /usr/src/app
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
-
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/package*.json ./
-
-# Copy environment example
-COPY .env.example .env.example
-
-# Switch to non-root user
-USER nodejs
-
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN chown -R node:node /usr/src/app
+USER node
 EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
 
+FROM node:20-bookworm-slim AS production
+WORKDIR /usr/src/app
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=build /usr/src/app/dist ./dist
+RUN chown -R node:node /usr/src/app
+USER node
+EXPOSE 3000
 CMD ["node", "dist/main.js"]

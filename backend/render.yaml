@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: stroyka-backend
+    runtime: docker
+    repo: https://github.com/yourusername/stroyka-backend.git
+    branch: main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        value: 6379
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION
+        value: 86400s
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: https://your-frontend-domain.com
+      - key: ADMIN_EMAIL
+        value: admin@stroyka.com
+      - key: ADMIN_PASSWORD
+        sync: false
+    buildCommand: docker build -t stroyka-backend .
+    startCommand: docker run -p 3000:3000 stroyka-backend
+    healthCheckPath: /health

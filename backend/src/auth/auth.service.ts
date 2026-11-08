@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from '../shared/entities/user.entity';
 import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -17,11 +16,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
-    private configService: ConfigService,
-  ) {
-    // Create admin user on startup if not exists
-    this.createAdminUser();
-  }
+  ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, password } = registerDto;
@@ -90,30 +85,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(payload: any): Promise<User> {
+  async validateUser(payload: { sub: string }): Promise<User | null> {
     return this.userRepository.findOne({ where: { id: payload.sub } });
-  }
-
-  private async createAdminUser(): Promise<void> {
-    const adminEmail = this.configService.get('ADMIN_EMAIL');
-    const adminPassword = this.configService.get('ADMIN_PASSWORD');
-
-    const existingAdmin = await this.userRepository.findOne({
-      where: { email: adminEmail },
-    });
-
-    if (!existingAdmin) {
-      const salt = await bcrypt.genSalt(10);
-      const password_hash = await bcrypt.hash(adminPassword, salt);
-
-      const adminUser = this.userRepository.create({
-        email: adminEmail,
-        password_hash,
-        role: UserRole.ADMIN,
-      });
-
-      await this.userRepository.save(adminUser);
-      console.log('Admin user created:', adminEmail);
-    }
   }
 }

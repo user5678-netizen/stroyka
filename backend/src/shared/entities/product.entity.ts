@@ -24,8 +24,8 @@ export class Product {
   @Column('float', { default: 0 })
   rating: number;
 
-  @Column('simple-array')
-  images: string[]; // Cloudinary URLs (minimum 3 images)
+  @Column('text', { array: true })
+  images: string[];
 
   @Column({ default: 0 })
   stock_quantity: number;

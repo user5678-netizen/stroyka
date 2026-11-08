@@ -3,6 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  UpdateDateColumn,
   ManyToOne,
   OneToMany,
   JoinColumn,
@@ -15,7 +16,7 @@ export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.carts)
+  @ManyToOne(() => User, (user) => user.carts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -28,7 +29,7 @@ export class Cart {
   items: CartItem[];
 
   @Column({ nullable: true })
-  promo_code: string;
+  promo_code?: string;
 
   @Column('decimal', { precision: 10, scale: 2, default: 0 })
   discount_amount: number;
@@ -36,19 +37,18 @@ export class Cart {
   @CreateDateColumn()
   created_at: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updated_at: Date;
 
-  // Calculate total price
   calculateTotal(): number {
     return this.items.reduce((total, item) => {
       return total + item.product.getPrice() * item.quantity;
     }, 0);
   }
 
-  // Calculate total with discount
   calculateTotalWithDiscount(): number {
     const total = this.calculateTotal();
-    return Math.max(0, total - this.discount_amount);
+    const discount = Number(this.discount_amount) || 0;
+    return Math.max(0, Math.round((total - discount) * 100) / 100);
   }
 }

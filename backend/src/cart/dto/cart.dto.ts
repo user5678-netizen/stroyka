@@ -15,6 +15,7 @@ export class CartItemDto {
   product_id: string;
 
   @ApiProperty({ minimum: 1 })
+  @Type(() => Number)
   @IsNumber()
   @Min(1)
   quantity: number;
@@ -22,6 +23,7 @@ export class CartItemDto {
 
 export class UpdateCartItemDto {
   @ApiProperty({ minimum: 1 })
+  @Type(() => Number)
   @IsNumber()
   @Min(1)
   quantity: number;

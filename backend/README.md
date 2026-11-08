@@ -1,284 +1,181 @@
 # Stroyka Backend API
 
-Backend API for construction materials store built with NestJS, PostgreSQL, Redis, and Docker.
+Backend магазина стройматериалов: NestJS, PostgreSQL 15, Redis, JWT, Cloudinary.
 
-## Tech Stack
+Схема БД в режиме `development` создаётся автоматически при старте (`synchronize`). Отдельно миграции запускать не нужно. Если Docker установлен, достаточно `docker compose up --build`. Если нет — ниже есть запуск на локальных PostgreSQL и Redis.
 
-- **Node.js** (LTS 20+)
-- **NestJS** (v11)
-- **PostgreSQL 15+** (Neon.tech Serverless)
-- **TypeORM**
-- **Redis** (Caching)
-- **Docker & Docker Compose**
-- **Cloudinary** (Media storage)
-- **JWT Authentication**
-- **RBAC** (Role-Based Access Control)
+## Что нужно заранее
 
-## Prerequisites
-
-- Docker & Docker Compose
-- Node.js 20+ (for local development)
-- Cloudinary account (for media storage)
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in the values:
+- Docker Desktop (запущен)
+- Файл `.env` рядом с `docker-compose.yml`
 
 ```bash
-cp .env.example .env
-```
-
-Required environment variables:
-
-```env
-# PostgreSQL Database (Neon.tech)
-DB_HOST=
-DB_PORT=5432
-DB_USERNAME=
-DB_PASSWORD=
-DB_NAME=
-
-# Redis Cache
-REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
-
-# JWT
-JWT_SECRET=super_secret_key_change_in_production
-JWT_EXPIRATION=86400s  # 24 hours
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-# Application
-PORT=3000
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
-
-# Admin user (initial admin credentials for seeding)
-ADMIN_EMAIL=admin@stroyka.com
-ADMIN_PASSWORD=Admin123!
-```
-
-## Local Development with Docker
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
 cd backend
+copy .env.example .env
 ```
 
-2. Create `.env` file with your configuration.
+В `.env.example` уже стоят локальные значения Postgres и Redis. Для `docker compose` хосты `DB_HOST` и `REDIS_HOST` из файла переопределяются на имена сервисов `postgres` и `redis`. Cloudinary для просмотра каталога не вызывается: можно оставить плейсхолдеры из примера и подставить свои ключи, когда понадобится загрузка картинок.
 
-3. Start the services:
+## Запуск через Docker
+
+Нужен установленный и запущенный Docker Desktop. На этой машине команды `docker` сейчас нет, поэтому ниже есть второй способ — на уже установленном PostgreSQL.
 
 ```bash
-docker-compose up --build
+cd backend
+docker compose up --build
 ```
 
-The application will be available at:
-- **API**: http://localhost:3000
-- **Swagger Docs**: http://localhost:3000/api-docs
-- **PostgreSQL**: localhost:5432
-- **Redis**: localhost:6379
+Первая сборка скачивает образы и ставит npm-зависимости, это несколько минут. Сервер готов, когда в логах `app` есть строка `Application is running`.
 
-4. To stop the services:
+Образ `app` собирается из `Dockerfile`: стадия `development` запускает `npm run start:dev` от пользователя `node`. Стадия `production` — это минимальный runtime с `node dist/main.js`, её использует Render.
+
+## Запуск без Docker
+
+Нужны Node.js 20+, PostgreSQL 15+ и Redis на `localhost:6379`.
+
+1. Скопируйте окружение, если `.env` ещё нет: `copy .env.example .env`
+2. Создайте базу (пароль из `.env`, по умолчанию `postgres`):
 
 ```bash
-docker-compose down
+psql -h localhost -U postgres -c "CREATE DATABASE stroyka;"
 ```
 
-5. To stop and remove volumes:
+Если база уже есть, команда ответит ошибкой — это нормально, идите дальше.
+
+3. Запустите Redis на порту 6379 и оставьте этот процесс открытым:
 
 ```bash
-docker-compose down -v
+set REDISMS_PORT=6379
+npx --yes redis-memory-server
 ```
 
-## Local Development without Docker
+В логе должна появиться строка `Redis server running at: 127.0.0.1:6379`. Если Redis уже установлен как служба, этот шаг не нужен.
 
-1. Install dependencies:
+4. Установите зависимости и запустите API:
 
 ```bash
+cd backend
 npm ci
-```
-
-2. Set up PostgreSQL and Redis locally or use Docker for them:
-
-```bash
-# Start only database and cache
-docker-compose up postgres redis
-```
-
-3. Create `.env` file with localhost configuration.
-
-4. Run migrations (if using TypeORM migrations):
-
-```bash
-npm run migration:run
-```
-
-5. Start the application:
-
-```bash
-# Development mode
 npm run start:dev
-
-# Production mode
-npm run build
-npm run start:prod
 ```
 
-## API Documentation
+Схема таблиц создаётся сама, потому что в `.env` стоит `NODE_ENV=development`.
 
-Interactive API documentation is available at `/api-docs` endpoint when the server is running.
+| Сервис | Адрес |
+|---|---|
+| API | http://localhost:3000 |
+| Swagger | http://localhost:3000/api-docs |
+| Проверка живости | http://localhost:3000/health |
+| PostgreSQL | localhost:5432, база `stroyka`, пользователь и пароль `postgres` |
+| Redis | localhost:6379 |
 
-## API Endpoints
-
-### Authentication
-
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login user
-
-### Products (Public)
-
-- `GET /api/products` - Get all products with filtering, sorting, pagination
-- `GET /api/products/:id` - Get single product by ID
-
-### Products (Admin only)
-
-- `POST /api/products` - Create new product
-- `PUT /api/products/:id` - Update product
-- `DELETE /api/products/:id` - Delete product
-
-### Cart (Authenticated users only)
-
-- `GET /api/cart` - Get user cart
-- `POST /api/cart/items` - Add item to cart
-- `PATCH /api/cart/items/:id` - Update cart item quantity
-- `DELETE /api/cart/items/:id` - Remove item from cart
-- `POST /api/cart/apply-promo` - Apply promo code (SAVE10 for 10% discount)
-- `DELETE /api/cart/remove-promo` - Remove promo code
-- `DELETE /api/cart/clear` - Clear entire cart
-
-## Filtering & Sorting (Products)
-
-The `GET /api/products` endpoint supports the following query parameters:
-
-- `page` (default: 1) - Page number
-- `limit` (default: 12) - Items per page
-- `search` - Search in title/description (case-insensitive)
-- `min_price`, `max_price` - Price range filtering
-- `min_rating` - Minimum rating filtering
-- `sort_by` (price/title) - Field to sort by
-- `order` (asc/desc) - Sort direction
-
-Example:
-```
-GET /api/products?page=1&limit=12&min_price=10&max_price=100&min_rating=4&sort_by=price&order=desc
-```
-
-## Caching Strategy
-
-- Product listing queries are cached for **120 seconds** using Redis
-- Cache keys are based on query parameters
-- Cache is invalidated on product creation, update, or deletion
-- Redis is also used for session storage and rate limiting
-
-## Database Schema
-
-### User
-- `id` (UUID, primary key)
-- `email` (string, unique)
-- `password_hash` (string)
-- `role` (enum: customer/admin)
-- `created_at` (timestamp)
-
-### Product
-- `id` (UUID, primary key)
-- `title` (string)
-- `description` (text)
-- `price` (decimal)
-- `rating` (float)
-- `images` (string array, Cloudinary URLs)
-- `stock_quantity` (integer)
-- `created_at` (timestamp)
-
-### Cart
-- `id` (UUID, primary key)
-- `user_id` (UUID, foreign key)
-- `promo_code` (string, nullable)
-- `discount_amount` (decimal)
-- `created_at`, `updated_at` (timestamps)
-
-### CartItem
-- `id` (UUID, primary key)
-- `cart_id` (UUID, foreign key)
-- `product_id` (UUID, foreign key)
-- `quantity` (integer)
-
-### PromoCode
-- `id` (UUID, primary key)
-- `code` (string, unique, e.g., SAVE10)
-- `discount_percentage` (decimal)
-- `is_active` (boolean)
-
-## Deploy to Render
-
-1. Connect your GitHub repository to Render
-2. Create a new Web Service
-3. Select Docker as the environment
-4. Add environment variables from `.env.example`
-5. For database, use Neon.tech PostgreSQL (serverless)
-6. For Redis, use Redis Cloud or similar
-7. For media storage, configure Cloudinary
-
-## Admin User
-
-On first startup, an admin user is automatically created with:
-- Email: `admin@stroyka.com` (configurable via ADMIN_EMAIL)
-- Password: `Admin123!` (configurable via ADMIN_PASSWORD)
-
-## Promo Codes
-
-The system includes a default promo code:
-- `SAVE10` - 10% discount (active by default)
-
-## Testing
+Остановка:
 
 ```bash
-# Run tests
-npm run test
-
-# Run tests with coverage
-npm run test:cov
-
-# Run tests in watch mode
-npm run test:watch
+docker compose down
 ```
 
-## Git Flow
+Вместе с данными БД и Redis:
 
-This project follows Git Flow methodology:
-- `main` - Production ready code
-- `develop` - Development branch
-- Feature branches: `feature/*`
-- Release branches: `release/*`
-- Hotfix branches: `hotfix/*`
+```bash
+docker compose down -v
+```
 
-## Commit Convention
+## Что создаётся при первом старте
 
-This project uses Conventional Commits:
+- Администратор: `admin@stroyka.com` / `Admin123!` (берутся из `ADMIN_EMAIL` и `ADMIN_PASSWORD`)
+- Промокод `SAVE10` со скидкой 10%
+- Три демонстрационных товара, если таблица товаров пустая
 
-- `feat:` - New feature
-- `fix:` - Bug fix
-- `chore:` - Maintenance tasks
-- `refactor:` - Code refactoring
-- `docs:` - Documentation changes
-- `test:` - Test related changes
+Регистрация через API всегда создаёт пользователя с ролью `customer`.
 
-## License
+## Переменные окружения
 
-Private - All rights reserved
+| Переменная | Назначение |
+|---|---|
+| `DB_HOST` | Хост PostgreSQL. Локально в Docker подменяется на `postgres`. Для Neon — хост из панели Neon |
+| `DB_PORT` | Порт PostgreSQL, обычно `5432` |
+| `DB_USERNAME` | Пользователь БД |
+| `DB_PASSWORD` | Пароль БД |
+| `DB_NAME` | Имя базы |
+| `REDIS_HOST` | Хост Redis. В Docker подменяется на `redis` |
+| `REDIS_PORT` | Порт Redis, обычно `6379` |
+| `REDIS_PASSWORD` | Пароль Redis. Пусто, если пароля нет |
+| `JWT_SECRET` | Секрет подписи JWT |
+| `JWT_EXPIRATION` | Срок токена, например `86400s` |
+| `CLOUDINARY_CLOUD_NAME` | Cloud name из Cloudinary |
+| `CLOUDINARY_API_KEY` | API key Cloudinary |
+| `CLOUDINARY_API_SECRET` | API secret Cloudinary |
+| `PORT` | Порт приложения, `3000` |
+| `NODE_ENV` | `development` или `production` |
+| `CORS_ORIGIN` | Origin фронтенда, по умолчанию `http://localhost:5173` |
+| `ADMIN_EMAIL` | Email администратора, который создаётся при старте |
+| `ADMIN_PASSWORD` | Пароль администратора, не короче 8 символов |
+
+## Как проверить API
+
+Каталог открыт без токена:
+
+```bash
+curl "http://localhost:3000/api/products?search=цемент&sort_by=price&order=asc"
+```
+
+Вход администратора:
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"admin@stroyka.com\",\"password\":\"Admin123!\"}"
+```
+
+Дальше заголовок `Authorization: Bearer <access_token>`.
+
+Регистрация покупателя: `POST /api/auth/register` с полями `email` и `password`.
+
+Корзина (нужен токен покупателя или администратора):
+
+- `GET /api/cart`
+- `POST /api/cart/items` — тело `{ "product_id": "<uuid>", "quantity": 1 }`
+- `PATCH /api/cart/items/:id` — тело `{ "quantity": 2 }`
+- `DELETE /api/cart/items/:id`
+- `POST /api/cart/apply-promo` — тело `{ "code": "SAVE10" }`
+
+Товар (только роль `admin`):
+
+- `POST /api/products` — `title`, `description`, `price`, `stock_quantity`, `images` (массив минимум из 3 URL)
+- `PUT /api/products/:id`
+- `DELETE /api/products/:id` — товар удаляется и из корзин, кэш каталога сбрасывается
+
+Каталог `GET /api/products` принимает `page` (по умолчанию 1), `limit` (по умолчанию 12), `search`, `min_price`, `max_price`, `min_rating`, `sort_by` (`price` или `title`), `order` (`asc` или `desc`). Ответ:
+
+```json
+{
+  "items": [],
+  "meta": {
+    "total_items": 0,
+    "total_pages": 0,
+    "current_page": 1,
+    "limit": 12
+  }
+}
+```
+
+Одинаковые query-параметры кэшируются в Redis на 120 секунд. Создание, изменение и удаление товара очищают эти ключи.
+
+Полный список схем и кнопка «Try it out» — в Swagger: http://localhost:3000/api-docs
+
+## Деплой
+
+- **База:** проект в [Neon](https://neon.tech). В переменные Render кладутся `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` из connection string. Для Neon нужен `NODE_ENV=production`: приложение тогда включает SSL.
+- **Медиа:** изображения товаров — URL из [Cloudinary](https://cloudinary.com). Ключи — три переменные `CLOUDINARY_*`.
+- **Приложение:** Web Service на [Render](https://render.com) из `Dockerfile` (финальная стадия `production`, процесс от пользователя `node`). Redis на Render или в Redis Cloud, его хост — в `REDIS_HOST`.
+- **Фронтенд:** `CORS_ORIGIN` равен origin клиентского приложения.
+- **Swagger на публичном API:** `https://<ваш-сервис>.onrender.com/api-docs`
+
+В `production` автоматическое создание таблиц выключено. Перед первым запуском на Neon примените миграцию из `src/migrations` либо один раз поднимите схему отдельно.
+
+## Если не стартует
+
+- Порт 3000 или 5432 занят: остановите другой Postgres/API или поменяйте левую часть проброса в `docker-compose.yml` (`"3001:3000"`).
+- Docker пишет, что daemon не запущен: откройте Docker Desktop и повторите `docker compose up --build`.
+- После смены сущностей осталась старая схема: `docker compose down -v` и снова `docker compose up --build`.

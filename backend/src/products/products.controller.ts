@@ -10,11 +10,7 @@ import {
   UseGuards,
   Req,
   ParseUUIDPipe,
-  UseInterceptors,
-  UploadedFiles,
-  BadRequestException,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
