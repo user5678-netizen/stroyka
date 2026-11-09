@@ -3,6 +3,7 @@ import { CartIcon, SearchIcon } from "./icons";
 import styles from "./Header.module.css";
 import { Link } from "react-router-dom";
 import { useCart } from "../store/CartContext";
+import { RealBackendLauncher } from "./RealBackendLauncher";
 
 export function Header() {
   const { cartCount } = useCart();
@@ -97,6 +98,10 @@ export function Header() {
           </div>
         </div>
       ) : null}
+      
+      <div className={styles.backendContainer}>
+        <RealBackendLauncher />
+      </div>
     </header>
   );
 }

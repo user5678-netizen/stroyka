@@ -61,13 +61,13 @@ npm run start:dev
 
 Схема таблиц создаётся сама, потому что в `.env` стоит `NODE_ENV=development`.
 
-| Сервис | Адрес |
-|---|---|
-| API | http://localhost:3000 |
-| Swagger | http://localhost:3000/api-docs |
-| Проверка живости | http://localhost:3000/health |
-| PostgreSQL | localhost:5432, база `stroyka`, пользователь и пароль `postgres` |
-| Redis | localhost:6379 |
+| Сервис                    | Адрес                                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| API                             | http://localhost:3000                                                                       |
+| Swagger                         | http://localhost:3000/api-docs                                                              |
+| Проверка живости | http://localhost:3000/health                                                                |
+| PostgreSQL                      | localhost:5432, база `stroyka`, пользователь и пароль `postgres` |
+| Redis                           | localhost:6379                                                                              |
 
 Остановка:
 
@@ -91,26 +91,26 @@ docker compose down -v
 
 ## Переменные окружения
 
-| Переменная | Назначение |
-|---|---|
-| `DB_HOST` | Хост PostgreSQL. Локально в Docker подменяется на `postgres`. Для Neon — хост из панели Neon |
-| `DB_PORT` | Порт PostgreSQL, обычно `5432` |
-| `DB_USERNAME` | Пользователь БД |
-| `DB_PASSWORD` | Пароль БД |
-| `DB_NAME` | Имя базы |
-| `REDIS_HOST` | Хост Redis. В Docker подменяется на `redis` |
-| `REDIS_PORT` | Порт Redis, обычно `6379` |
-| `REDIS_PASSWORD` | Пароль Redis. Пусто, если пароля нет |
-| `JWT_SECRET` | Секрет подписи JWT |
-| `JWT_EXPIRATION` | Срок токена, например `86400s` |
-| `CLOUDINARY_CLOUD_NAME` | Cloud name из Cloudinary |
-| `CLOUDINARY_API_KEY` | API key Cloudinary |
-| `CLOUDINARY_API_SECRET` | API secret Cloudinary |
-| `PORT` | Порт приложения, `3000` |
-| `NODE_ENV` | `development` или `production` |
-| `CORS_ORIGIN` | Origin фронтенда, по умолчанию `http://localhost:5173` |
-| `ADMIN_EMAIL` | Email администратора, который создаётся при старте |
-| `ADMIN_PASSWORD` | Пароль администратора, не короче 8 символов |
+| Переменная      | Назначение                                                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `DB_HOST`               | Хост PostgreSQL. Локально в Docker подменяется на `postgres`. Для Neon — хост из панели Neon |
+| `DB_PORT`               | Порт PostgreSQL, обычно `5432`                                                                                               |
+| `DB_USERNAME`           | Пользователь БД                                                                                                            |
+| `DB_PASSWORD`           | Пароль БД                                                                                                                        |
+| `DB_NAME`               | Имя базы                                                                                                                          |
+| `REDIS_HOST`            | Хост Redis. В Docker подменяется на `redis`                                                                          |
+| `REDIS_PORT`            | Порт Redis, обычно `6379`                                                                                                    |
+| `REDIS_PASSWORD`        | Пароль Redis. Пусто, если пароля нет                                                                             |
+| `JWT_SECRET`            | Секрет подписи JWT                                                                                                          |
+| `JWT_EXPIRATION`        | Срок токена, например `86400s`                                                                                       |
+| `CLOUDINARY_CLOUD_NAME` | Cloud name из Cloudinary                                                                                                               |
+| `CLOUDINARY_API_KEY`    | API key Cloudinary                                                                                                                       |
+| `CLOUDINARY_API_SECRET` | API secret Cloudinary                                                                                                                    |
+| `PORT`                  | Порт приложения, `3000`                                                                                                  |
+| `NODE_ENV`              | `development` или `production`                                                                                                    |
+| `CORS_ORIGIN`           | Origin фронтенда, по умолчанию `http://localhost:5173`                                                             |
+| `ADMIN_EMAIL`           | Email администратора, который создаётся при старте                                                |
+| `ADMIN_PASSWORD`        | Пароль администратора, не короче 8 символов                                                          |
 
 ## Как проверить API
 

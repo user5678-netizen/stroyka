@@ -276,3 +276,30 @@
   }
 }
 
+
+.backendContainer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.backendContainer .backendLauncher {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: transparent;
+  box-shadow: none;
+  padding: 16px 20px;
+}
+
+@media (max-width: 760px) {
+  .backendContainer .backendLauncher {
+    padding: 12px 16px;
+  }
+  
+  .backendContainer .backendLauncher .controls {
+    flex-direction: column;
+  }
+  
+  .backendContainer .backendLauncher .button {
+    width: 100%;
+  }
+}
