@@ -15,6 +15,9 @@ export class Product {
   @Column()
   title: string;
 
+  @Column({ default: 'General' })
+  category: string;
+
   @Column('text')
   description: string;
 

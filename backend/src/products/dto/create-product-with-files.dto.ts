@@ -5,47 +5,36 @@ import {
   IsOptional,
   Min,
   Max,
-  ValidateIf,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductWithFilesDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'Молоток строительный' })
   @IsString()
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Профессиональный молоток для строительных работ' })
   @IsString()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 2499.99 })
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   price: number;
 
-  @ApiPropertyOptional({ minimum: 0, maximum: 5 })
+  @ApiPropertyOptional({ minimum: 0, maximum: 5, example: 4.5 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @Max(5)
   rating?: number = 0;
 
-  @ApiPropertyOptional({ minimum: 0 })
+  @ApiPropertyOptional({ minimum: 0, example: 100 })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   stock_quantity?: number = 0;
-
-  // This field will be populated from uploaded files
-  images?: string[];
-}
-
-// Separate validation for when images are uploaded as files
-export class CreateProductWithUploadDto extends CreateProductWithFilesDto {
-  @ApiProperty({
-    type: 'array',
-    items: { type: 'string', format: 'binary' },
-    minItems: 3,
-  })
-  @ValidateIf((o) => !o.images || o.images.length === 0)
-  imageFiles?: any[]; // Will be populated by Multer
 }

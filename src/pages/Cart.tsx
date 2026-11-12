@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -16,7 +16,6 @@ function formatPrice(value: number) {
 }
 
 const TAX_RATE = 0.08;
-const PROMO_CODES = new Set(["SAVE10", "BUILD10"]);
 
 type CartSidebarProps = {
   subtotal: number;
@@ -88,28 +87,47 @@ function CartSidebar({ subtotal, tax, discount, total, checkoutDisabled }: CartS
 }
 
 export function Cart() {
-  const { items, subtotal, setQuantity, removeFromCart } = useCart();
+  const {
+    items,
+    subtotal,
+    discount,
+    promoCode,
+    setQuantity,
+    removeFromCart,
+    applyPromo,
+    loading,
+  } = useCart();
   const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState("");
   const [promoError, setPromoError] = useState("");
   const [promoSuccess, setPromoSuccess] = useState(false);
 
+  useEffect(() => {
+    if (promoCode) {
+      setPromoInput(promoCode);
+      setPromoSuccess(true);
+      setPromoError("");
+    }
+  }, [promoCode]);
+
   const isEmpty = items.length === 0;
   const tax = subtotal > 0 ? subtotal * TAX_RATE : 0;
-  const discount = appliedPromo ? subtotal * 0.1 : 0;
-  const total = subtotal + tax - discount;
+  const total = Math.max(0, subtotal + tax - discount);
 
-  const applyPromo = () => {
+  const handleApplyPromo = async () => {
     const normalized = promoInput.trim().toUpperCase();
-    if (PROMO_CODES.has(normalized)) {
-      setAppliedPromo(normalized);
-      setPromoError("");
-      setPromoSuccess(true);
+    if (!normalized) {
+      setPromoError("Enter a promo code");
+      setPromoSuccess(false);
       return;
     }
-    setAppliedPromo("");
-    setPromoSuccess(false);
-    setPromoError("Invalid promo code");
+    try {
+      await applyPromo(normalized);
+      setPromoError("");
+      setPromoSuccess(true);
+    } catch {
+      setPromoSuccess(false);
+      setPromoError("Invalid promo code");
+    }
   };
 
   return (
@@ -150,9 +168,9 @@ export function Cart() {
                   </div>
 
                   {items.map((item) => {
-                    const lineTotal = item.product.price * item.quantity;
+                    const lineTotal = item.lineTotal;
                     return (
-                      <div key={item.product.id} className={styles.tableRow} role="row">
+                      <div key={item.cartItemId} className={styles.tableRow} role="row">
                         <div className={styles.cellProduct} role="cell">
                           <img
                             className={styles.itemImage}
@@ -172,7 +190,10 @@ export function Cart() {
                             <button
                               type="button"
                               className={styles.qtyBtn}
-                              onClick={() => setQuantity(item.product.id, item.quantity - 1)}
+                              disabled={loading}
+                              onClick={() => {
+                                void setQuantity(item.product.id, item.quantity - 1);
+                              }}
                               aria-label="Decrease quantity"
                             >
                               -
@@ -181,7 +202,10 @@ export function Cart() {
                             <button
                               type="button"
                               className={styles.qtyBtn}
-                              onClick={() => setQuantity(item.product.id, item.quantity + 1)}
+                              disabled={loading}
+                              onClick={() => {
+                                void setQuantity(item.product.id, item.quantity + 1);
+                              }}
                               aria-label="Increase quantity"
                             >
                               +
@@ -194,7 +218,10 @@ export function Cart() {
                             <button
                               type="button"
                               className={styles.trashBtn}
-                              onClick={() => removeFromCart(item.product.id)}
+                              disabled={loading}
+                              onClick={() => {
+                                void removeFromCart(item.product.id);
+                              }}
                               aria-label={`Remove ${item.product.name} from cart`}
                             >
                               <TrashIcon />
@@ -220,21 +247,34 @@ export function Cart() {
                       placeholder="Enter promo code"
                       aria-label="Enter promo code"
                     />
-                    <button className={styles.promoApply} type="button" onClick={applyPromo}>
+                    <button
+                      className={styles.promoApply}
+                      type="button"
+                      disabled={loading}
+                      onClick={() => {
+                        void handleApplyPromo();
+                      }}
+                    >
                       Apply
                     </button>
                   </div>
                   {!promoSuccess && promoInput.trim().length > 0 ? (
-                    <p className={styles.promoHint}>Try code: BUILD10 for 10% off</p>
+                    <p className={styles.promoHint}>Try code: SAVE10 for 10% off</p>
                   ) : null}
-                  {promoSuccess && appliedPromo ? (
+                  {promoSuccess && promoCode ? (
                     <p className={styles.promoSuccess}>✓ Promo code applied! You saved 10%</p>
                   ) : null}
                   {promoError ? <p className={styles.promoError}>{promoError}</p> : null}
                 </div>
               </section>
 
-              <CartSidebar subtotal={subtotal} tax={tax} discount={discount} total={total} />
+              <CartSidebar
+                subtotal={subtotal}
+                tax={tax}
+                discount={discount}
+                total={total}
+                checkoutDisabled={loading}
+              />
             </div>
           )}
         </div>

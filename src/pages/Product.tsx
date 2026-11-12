@@ -6,8 +6,9 @@ import { ImageCarousel } from "../components/ImageCarousel";
 import { ProductCard } from "../components/ProductCard";
 import { Rating } from "../components/Rating";
 import { BadgeBoxIcon, BadgeShieldIcon, BadgeTruckIcon, CartIcon } from "../components/icons";
-import { products } from "../data/products";
-import type { TechnicalSpec } from "../types";
+import type { Product as ProductType, TechnicalSpec } from "../types";
+import { SPEC_COLUMNS_BY_TITLE } from "../data/productExtras";
+import { fetchProductById, fetchProducts } from "../api/products";
 import { useCart } from "../store/CartContext";
 import styles from "./Product.module.css";
 
@@ -16,32 +17,6 @@ const FALLBACK_SPECS: TechnicalSpec[] = [
 ];
 const SPECS_FIRST_COLUMN = ["VOLUME", "COVERAGE", "DRY TIME"];
 const SPECS_SECOND_COLUMN = ["TYPE", "FINISH", "COLORS"];
-const SPEC_COLUMN_OVERRIDES: Record<string, { left: string[]; right: string[] }> = {
-  "2": {
-    left: ["DIMENSIONS", "GRADE", "EXPOSURE"],
-    right: ["THICKNESS", "PLIES", "VENEER"],
-  },
-  "1": {
-    left: ["WEIGHT", "COMPRESSIVE STRENGTH", "COVERAGE"],
-    right: ["TYPE", "SETTING TIME", "STORAGE LIFE"],
-  },
-  "3": {
-    left: ["DIMENSIONS", "GRADE", "TREATMENT"],
-    right: ["WOOD TYPE", "MOISTURE CONTENT", "QUANTITY"],
-  },
-  "4": {
-    left: ["DIMENSIONS", "COMPRESSIVE STRENGTH", "COLOR"],
-    right: ["MATERIAL", "WATER ABSORPTION", "WEIGHT"],
-  },
-  "6": {
-    left: ["LENGTH", "MATERIAL", "YIELD STRENGTH"],
-    right: ["PROFILE", "WEIGHT", "FINISH"],
-  },
-};
-const RELATED_OVERRIDES: Record<string, string[]> = {
-  "2": ["3"], // Plywood Sheets -> Premium Lumber Planks
-  "3": ["2"], // Premium Lumber Planks -> Plywood Sheets
-};
 
 function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
@@ -51,13 +26,58 @@ export function Product() {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [specsOpen, setSpecsOpen] = useState(false);
+  const [product, setProduct] = useState<ProductType | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { addToCart } = useCart();
-
-  const product = useMemo(() => products.find((p) => p.id === id), [id]);
 
   useEffect(() => {
     setQuantity(1);
     setSpecsOpen(false);
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const current = await fetchProductById(id);
+        if (cancelled) return;
+        setProduct(current);
+
+        const related = await fetchProducts({
+          page: 1,
+          limit: 12,
+          sort_by: "title",
+          order: "asc",
+        });
+        if (cancelled) return;
+        setRelatedProducts(
+          related.items
+            .filter(
+              (item) =>
+                item.id !== current.id && item.category === current.category,
+            )
+            .slice(0, 3),
+        );
+      } catch (err) {
+        if (!cancelled) {
+          setProduct(null);
+          setRelatedProducts([]);
+          setError(err instanceof Error ? err.message : "Product not found");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const increaseQty = () => {
@@ -85,11 +105,14 @@ export function Product() {
     : "";
 
   const technicalSpecs = product?.technicalSpecs ?? FALLBACK_SPECS;
-  const specsByLabel = new Map(technicalSpecs.map((row) => [row.label.toUpperCase(), row]));
+  const specsByLabel = useMemo(
+    () => new Map(technicalSpecs.map((row) => [row.label.toUpperCase(), row])),
+    [technicalSpecs],
+  );
   const getSpecsForLabels = (labels: string[]) =>
     labels.map((label) => specsByLabel.get(label)).filter((row): row is TechnicalSpec => Boolean(row));
 
-  const overrideColumns = product ? SPEC_COLUMN_OVERRIDES[product.id] : undefined;
+  const overrideColumns = product ? SPEC_COLUMNS_BY_TITLE[product.name] : undefined;
   const firstSpecColumn = overrideColumns
     ? getSpecsForLabels(overrideColumns.left)
     : getSpecsForLabels(SPECS_FIRST_COLUMN);
@@ -103,19 +126,19 @@ export function Product() {
   const rightSpecs = hasKnownColumns ? secondSpecColumn : [];
   const getSpecRowClassName = (label: string) =>
     `${styles.specRow} ${label.toUpperCase() === "COLORS" ? styles.specRowNoUnderline : ""}`;
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
-    const overrideIds = RELATED_OVERRIDES[product.id];
-    if (overrideIds && overrideIds.length > 0) {
-      return overrideIds
-        .map((relatedId) => products.find((p) => p.id === relatedId))
-        .filter((p): p is NonNullable<typeof p> => Boolean(p));
-    }
 
-    return products
-      .filter((p) => p.id !== product.id && p.category === product.category)
-      .slice(0, 3);
-  }, [product]);
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <Header />
+        <main className={styles.main}>
+          <div className={styles.container}>
+            <h1 className={styles.h1}>Loading...</h1>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -128,6 +151,7 @@ export function Product() {
               Not found
             </p>
             <h1 className={styles.h1}>Product not found</h1>
+            {error ? <p>{error}</p> : null}
           </div>
         </main>
       </div>
@@ -216,7 +240,9 @@ export function Product() {
                 <button
                   className={styles.primary}
                   type="button"
-                  onClick={() => addToCart(product, quantity)}
+                  onClick={() => {
+                    void addToCart(product, quantity);
+                  }}
                 >
                   <CartIcon className={styles.primaryIcon} />
                   Add to Cart
@@ -289,4 +315,3 @@ export function Product() {
     </div>
   );
 }
-

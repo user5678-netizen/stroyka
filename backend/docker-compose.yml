@@ -33,8 +33,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: stroyka
-    ports:
-      - "5432:5432"
+    # Порт наружу не пробрасываем: app ходит в postgres:5432 по Docker-сети.
+    # Если нужен доступ с хоста: раскомментируйте и выберите свободный порт.
+    # ports:
+    #   - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

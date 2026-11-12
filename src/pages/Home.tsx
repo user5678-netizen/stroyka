@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
-import { products } from "../data/products";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ProductCard } from "../components/ProductCard";
 import { SlidersIcon } from "../components/icons";
+import { fetchProducts } from "../api/products";
+import type { Product } from "../types";
 import styles from "./Home.module.css";
 
 type SortValue = "name-asc" | "price-asc" | "price-desc";
@@ -12,33 +14,62 @@ const PRICE_MAX = 400;
 const RATING_FILTERS = [5, 4, 3] as const;
 
 export function Home() {
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search")?.trim() ?? "";
+
   const [sortBy, setSortBy] = useState<SortValue>("name-asc");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
   const [minPrice, setMinPrice] = useState<number>(PRICE_MIN);
   const [maxPrice, setMaxPrice] = useState<number>(PRICE_MAX);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
-      if (p.price < minPrice || p.price > maxPrice) return false;
-      if (selectedRatings.length > 0 && !selectedRatings.some((rating) => p.rating >= rating)) return false;
-      return true;
-    });
-  }, [maxPrice, minPrice, selectedRatings]);
+  const minRating = useMemo(
+    () => (selectedRatings.length ? Math.min(...selectedRatings) : undefined),
+    [selectedRatings],
+  );
 
-  const visibleProducts = useMemo(() => {
-    const next = [...filteredProducts];
-    if (sortBy === "price-asc") {
-      next.sort((a, b) => a.price - b.price);
-      return next;
-    }
-    if (sortBy === "price-desc") {
-      next.sort((a, b) => b.price - a.price);
-      return next;
-    }
-    next.sort((a, b) => a.name.localeCompare(b.name));
-    return next;
-  }, [filteredProducts, sortBy]);
+  useEffect(() => {
+    let cancelled = false;
+    const sort_by = sortBy.startsWith("price") ? "price" : "title";
+    const order = sortBy === "price-desc" ? "desc" : "asc";
+
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const result = await fetchProducts({
+          page: 1,
+          limit: 48,
+          search: search || undefined,
+          min_price: minPrice,
+          max_price: maxPrice,
+          min_rating: minRating,
+          sort_by,
+          order,
+        });
+        if (!cancelled) {
+          setProducts(result.items);
+          setTotalItems(result.meta.total_items);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setProducts([]);
+          setTotalItems(0);
+          setError(err instanceof Error ? err.message : "Failed to load products");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [maxPrice, minPrice, minRating, search, sortBy]);
 
   const toggleRating = (value: number) => {
     setSelectedRatings((prev) =>
@@ -77,7 +108,10 @@ export function Home() {
               {filtersOpen ? "Hide Filters" : "Show Filters"}
             </button>
 
-            <div className={styles.count}>Showing {visibleProducts.length} products</div>
+            <div className={styles.count}>
+              {loading ? "Loading..." : `Showing ${totalItems} products`}
+              {search ? ` for “${search}”` : ""}
+            </div>
 
             <div className={styles.sort}>
               <span className={styles.sortLabel}>Sort by:</span>
@@ -161,8 +195,17 @@ export function Home() {
             </section>
           ) : null}
 
+          {error ? (
+            <p role="alert" style={{ color: "#b42318", marginTop: 16 }}>
+              {error}. Make sure backend is running at http://localhost:3000
+            </p>
+          ) : null}
+
           <section className={styles.grid} aria-label="Products">
-            {visibleProducts.map((p) => (
+            {!loading && !error && products.length === 0 ? (
+              <p>No products found.</p>
+            ) : null}
+            {products.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </section>
@@ -173,4 +216,3 @@ export function Home() {
     </div>
   );
 }
-

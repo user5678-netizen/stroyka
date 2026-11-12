@@ -24,7 +24,7 @@ GET http://localhost:3000/api/products?page=1&limit=10&min_price=10&max_price=10
 ### 4. Get single product
 GET http://localhost:3000/api/products/123e4567-e89b-12d3-a456-426614174000
 
-### 5. Create product (admin only - need JWT token)
+### 5. Create product with image URLs (admin only - need JWT token)
 POST http://localhost:3000/api/products
 Authorization: Bearer YOUR_JWT_TOKEN_HERE
 Content-Type: application/json
@@ -41,6 +41,44 @@ Content-Type: application/json
   ],
   "stock_quantity": 100
 }
+
+### 5b. Create product with Cloudinary upload (admin only, multipart)
+POST http://localhost:3000/api/products/upload
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="title"
+
+Молоток строительный
+------WebKitFormBoundary
+Content-Disposition: form-data; name="description"
+
+Профессиональный молоток
+------WebKitFormBoundary
+Content-Disposition: form-data; name="price"
+
+2499.99
+------WebKitFormBoundary
+Content-Disposition: form-data; name="stock_quantity"
+
+100
+------WebKitFormBoundary
+Content-Disposition: form-data; name="images"; filename="1.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/1.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="images"; filename="2.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/2.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="images"; filename="3.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/3.jpg
+------WebKitFormBoundary--
 
 ### 6. Get user cart (requires auth)
 GET http://localhost:3000/api/cart

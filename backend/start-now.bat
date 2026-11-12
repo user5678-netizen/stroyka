@@ -1,52 +1,38 @@
 @echo off
 echo ========================================
-echo    🚀 МГНОВЕННЫЙ ЗАПУСК Stroyka Backend
+echo    Stroyka Backend (NestJS)
 echo ========================================
-echo.
-echo Установка Express и запуск сервера...
 echo.
 
 cd /d "%~dp0"
 
-REM Установка Express если не установлен
-echo [1/3] Проверка зависимостей...
 where node >nul 2>nul
 if %errorlevel% neq 0 (
-    echo ❌ Node.js не установлен!
-    echo Установите Node.js с https://nodejs.org/
+    echo Node.js not found. Install from https://nodejs.org/
     pause
     exit /b 1
 )
 
-echo ✅ Node.js обнаружен
+where docker >nul 2>nul
+if %errorlevel% neq 0 (
+    echo Docker not found. Install Docker Desktop, then run:
+    echo   docker compose up --build
+    pause
+    exit /b 1
+)
 
-REM Установка express и cors
-echo [2/3] Установка Express...
-npm install express cors --save 2>nul
+if not exist ".env" (
+    copy .env.example .env >nul
+    echo Created .env from .env.example
+)
 
-echo [3/3] Запуск сервера...
+echo Starting via Docker Compose...
+echo API:     http://localhost:3000
+echo Swagger: http://localhost:3000/api-docs
+echo Health:  http://localhost:3000/health
 echo.
-echo ========================================
-echo    СЕРВЕР ЗАПУЩЕН!
-echo ========================================
-echo.
-echo Кликните по ссылкам для быстрого доступа:
-echo 🌐 http://localhost:3000/api-docs
-echo 🩺 http://localhost:3000/health
-echo 📦 http://localhost:3000/products
-echo.
-echo Открываю документацию в браузере...
-start http://localhost:3000/api-docs
-
-echo.
-echo Сервер запускается...
-echo Для остановки закройте это окно или нажмите Ctrl+C
+echo Press Ctrl+C to stop.
 echo.
 
-node simple-server.js
-
-echo.
-echo ========================================
-echo    СЕРВЕР ОСТАНОВЛЕН
-echo ========================================
+docker compose up --build
 pause

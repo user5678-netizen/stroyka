@@ -76,6 +76,11 @@ export class CreateProductDto {
   @IsString()
   title: string;
 
+  @ApiPropertyOptional({ default: 'General' })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
   @ApiProperty()
   @IsString()
   description: string;
@@ -109,6 +114,11 @@ export class UpdateProductDto {
   @IsOptional()
   @IsString()
   title?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  category?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -148,6 +158,9 @@ export class ProductResponseDto {
 
   @ApiProperty()
   title: string;
+
+  @ApiProperty()
+  category: string;
 
   @ApiProperty()
   description: string;

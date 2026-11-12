@@ -34,7 +34,13 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className={styles.category}>{product.category}</div>
 
-        <button className={styles.cta} type="button" onClick={() => addToCart(product, 1)}>
+        <button
+          className={styles.cta}
+          type="button"
+          onClick={() => {
+            void addToCart(product, 1);
+          }}
+        >
           <CartIcon className={styles.ctaIcon} />
           Add to Cart
         </button>

@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { CartIcon, SearchIcon } from "./icons";
 import styles from "./Header.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "../store/CartContext";
-import { RealBackendLauncher } from "./RealBackendLauncher";
 
 export function Header() {
   const { cartCount } = useCart();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState(searchParams.get("search") ?? "");
+
+  const submitSearch = (event: FormEvent) => {
+    event.preventDefault();
+    const q = searchValue.trim();
+    navigate(q ? `/?search=${encodeURIComponent(q)}` : "/");
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className={styles.header}>
@@ -35,14 +44,16 @@ export function Header() {
         </nav>
 
         <div className={styles.headerRight}>
-          <div className={styles.searchWrap}>
+          <form className={styles.searchWrap} onSubmit={submitSearch}>
             <SearchIcon className={styles.searchIcon} />
             <input
               className={styles.search}
               placeholder="Search products..."
               aria-label="Search products"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
             />
-          </div>
+          </form>
 
           <button
             className={`${styles.iconBtn} ${styles.mobileOnly}`}
@@ -98,11 +109,6 @@ export function Header() {
           </div>
         </div>
       ) : null}
-      
-      <div className={styles.backendContainer}>
-        <RealBackendLauncher />
-      </div>
     </header>
   );
 }
-

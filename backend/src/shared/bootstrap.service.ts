@@ -7,6 +7,102 @@ import { User, UserRole } from './entities/user.entity';
 import { PromoCode } from './entities/promo-code.entity';
 import { Product } from './entities/product.entity';
 
+/** Same catalog as last-semester frontend (`src/data/products.ts`). */
+const FRONTEND_CATALOG: Array<{
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  rating: number;
+  stock_quantity: number;
+  images: string[];
+}> = [
+  {
+    title: 'Exterior Paint Set',
+    category: 'Paint & Coatings',
+    price: 45.99,
+    rating: 3.5,
+    stock_quantity: 80,
+    images: [
+      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'Professional-grade exterior paint set designed to withstand harsh weather conditions. This premium paint offers excellent coverage, durability, and color retention. Perfect for residential and commercial applications.',
+  },
+  {
+    title: 'Plywood Sheets',
+    category: 'Wood & Lumber',
+    price: 52.99,
+    rating: 4.5,
+    stock_quantity: 120,
+    images: [
+      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'Versatile construction-grade plywood sheets suitable for a wide range of applications. These sheets are engineered for strength and dimensional stability, perfect for subfloors, roofing, walls, and general construction.',
+  },
+  {
+    title: 'Premium Cement Bags',
+    category: 'Cement & Concrete',
+    price: 24.99,
+    rating: 5.0,
+    stock_quantity: 200,
+    images: [
+      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'High-quality Portland cement bags designed for heavy-duty construction projects. Our premium cement offers exceptional strength, durability, and workability. Ideal for foundations, structural work, and general concrete applications.',
+  },
+  {
+    title: 'Premium Lumber Planks',
+    category: 'Wood & Lumber',
+    price: 89.99,
+    rating: 4.5,
+    stock_quantity: 90,
+    images: [
+      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'Premium kiln-dried lumber planks perfect for all your woodworking and construction needs. These high-grade wooden planks are carefully selected for strength and appearance.',
+  },
+  {
+    title: 'Red Clay Bricks',
+    category: 'Bricks & Blocks',
+    price: 0.89,
+    rating: 4.0,
+    stock_quantity: 5000,
+    images: [
+      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'Traditional red clay bricks manufactured to the highest standards. These durable bricks are perfect for walls, patios, pathways, and architectural features.',
+  },
+  {
+    title: 'Steel I-Beams',
+    category: 'Steel & Metal',
+    price: 349.99,
+    rating: 5.0,
+    stock_quantity: 40,
+    images: [
+      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    ],
+    description:
+      'Heavy-duty structural steel I-beams engineered for maximum load-bearing capacity. These professional-grade beams are essential for large construction projects.',
+  },
+];
+
 @Injectable()
 export class BootstrapService implements OnModuleInit {
   private readonly logger = new Logger(BootstrapService.name);
@@ -70,48 +166,9 @@ export class BootstrapService implements OnModuleInit {
       return;
     }
 
-    const products = [
-      {
-        title: 'Цемент М500',
-        description: 'Портландцемент для стяжки, кладки и бетона.',
-        price: 450,
-        rating: 4.7,
-        stock_quantity: 120,
-        images: [
-          'https://picsum.photos/id/1015/800/600',
-          'https://picsum.photos/id/1016/800/600',
-          'https://picsum.photos/id/1018/800/600',
-        ],
-      },
-      {
-        title: 'Кирпич керамический',
-        description: 'Рядовой кирпич для несущих стен и перегородок.',
-        price: 28.5,
-        rating: 4.2,
-        stock_quantity: 5000,
-        images: [
-          'https://picsum.photos/id/1033/800/600',
-          'https://picsum.photos/id/1036/800/600',
-          'https://picsum.photos/id/1040/800/600',
-        ],
-      },
-      {
-        title: 'Доска обрезная',
-        description: 'Хвойная доска камерной сушки для каркаса и опалубки.',
-        price: 890,
-        rating: 4.9,
-        stock_quantity: 80,
-        images: [
-          'https://picsum.photos/id/106/800/600',
-          'https://picsum.photos/id/129/800/600',
-          'https://picsum.photos/id/164/800/600',
-        ],
-      },
-    ];
-
     await this.productRepository.save(
-      products.map((product) => this.productRepository.create(product)),
+      FRONTEND_CATALOG.map((product) => this.productRepository.create(product)),
     );
-    this.logger.log('Demo products seeded');
+    this.logger.log(`Frontend catalog seeded: ${FRONTEND_CATALOG.length} products`);
   }
 }

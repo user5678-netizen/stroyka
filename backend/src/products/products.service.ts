@@ -95,6 +95,7 @@ export class ProductsService {
       items: products.map((product) => ({
         id: product.id,
         title: product.title,
+        category: product.category,
         description: product.description,
         price: product.getPrice(),
         rating: product.rating,

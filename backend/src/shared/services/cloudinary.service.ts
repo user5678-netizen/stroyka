@@ -50,7 +50,7 @@ export class CloudinaryService {
 
   private extractPublicIdFromUrl(url: string): string | null {
     try {
-      const matches = url.match(/\/v\d+\/([^/.]+)/);
+      const matches = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.[^.]+)?$/);
       return matches ? matches[1] : null;
     } catch {
       return null;

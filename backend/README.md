@@ -66,7 +66,7 @@ npm run start:dev
 | API                             | http://localhost:3000                                                                       |
 | Swagger                         | http://localhost:3000/api-docs                                                              |
 | Проверка живости | http://localhost:3000/health                                                                |
-| PostgreSQL                      | localhost:5432, база `stroyka`, пользователь и пароль `postgres` |
+| PostgreSQL                      | внутри Docker: `postgres:5432`, база `stroyka`, user/password `postgres` (порт на хост не проброшен, чтобы не конфликтовать с локальным Postgres) |
 | Redis                           | localhost:6379                                                                              |
 
 Остановка:
@@ -142,7 +142,8 @@ curl -X POST http://localhost:3000/api/auth/login ^
 
 Товар (только роль `admin`):
 
-- `POST /api/products` — `title`, `description`, `price`, `stock_quantity`, `images` (массив минимум из 3 URL)
+- `POST /api/products` — `title`, `description`, `price`, `stock_quantity`, `images` (массив минимум из 3 URL, лучше Cloudinary)
+- `POST /api/products/upload` — multipart: те же поля + минимум 3 файла `images`; загрузка в Cloudinary, в БД сохраняются URL
 - `PUT /api/products/:id`
 - `DELETE /api/products/:id` — товар удаляется и из корзин, кэш каталога сбрасывается
 
@@ -176,6 +177,7 @@ curl -X POST http://localhost:3000/api/auth/login ^
 
 ## Если не стартует
 
-- Порт 3000 или 5432 занят: остановите другой Postgres/API или поменяйте левую часть проброса в `docker-compose.yml` (`"3001:3000"`).
+- Порт 3000 занят: остановите другой сервис или поменяйте проброс app в `docker-compose.yml` (`"3001:3000"`).
+- Нужен `psql` с хоста: раскомментируйте `ports` у сервиса `postgres` в `docker-compose.yml` на свободный порт.
 - Docker пишет, что daemon не запущен: откройте Docker Desktop и повторите `docker compose up --build`.
 - После смены сущностей осталась старая схема: `docker compose down -v` и снова `docker compose up --build`.
