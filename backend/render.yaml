@@ -2,13 +2,17 @@ services:
   - type: web
     name: stroyka-backend
     runtime: docker
-    branch: main
+    branch: dev
     dockerfilePath: backend/Dockerfile
     dockerContext: backend
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_SSL
+        value: "true"
       - key: DB_HOST
         sync: false
       - key: DB_PORT
@@ -18,6 +22,8 @@ services:
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
+        sync: false
+      - key: REDIS_URL
         sync: false
       - key: REDIS_HOST
         sync: false
@@ -35,8 +41,6 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
-      - key: PORT
-        value: 3000
       - key: CORS_ORIGIN
         sync: false
       - key: ADMIN_EMAIL

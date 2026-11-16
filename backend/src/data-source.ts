@@ -1,24 +1,16 @@
 import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
-import path from 'path';
+import { join } from 'path';
+import { postgresConnectionFromEnv } from './shared/config/postgres.config';
 
 config();
 
-const configService = new ConfigService();
+const connection = postgresConnectionFromEnv();
 
 export const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: configService.get('DB_HOST'),
-  port: configService.get('DB_PORT'),
-  username: configService.get('DB_USERNAME'),
-  password: configService.get('DB_PASSWORD'),
-  database: configService.get('DB_NAME'),
-  entities: [path.join(__dirname, '**', '*.entity{.ts,.js}')],
-  migrations: [path.join(__dirname, 'migrations', '*{.ts,.js}')],
+  ...connection,
+  entities: [join(__dirname, '**', '*.entity{.ts,.js}')],
+  migrations: [join(__dirname, 'migrations', '*{.ts,.js}')],
   synchronize: false,
-  logging: configService.get('NODE_ENV') === 'development',
-  ssl: configService.get('NODE_ENV') === 'production' ? {
-    rejectUnauthorized: false
-  } : false,
+  logging: process.env.NODE_ENV === 'development',
 });

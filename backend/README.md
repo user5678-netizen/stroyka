@@ -93,11 +93,14 @@ docker compose down -v
 
 | Переменная      | Назначение                                                                                                                     |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`          | Строка подключения Neon. Если задана, отдельные `DB_*` не обязательны |
+| `DB_SSL`                | `true` для Neon и Render. Локальный Docker: `false` |
 | `DB_HOST`               | Хост PostgreSQL. Локально в Docker подменяется на `postgres`. Для Neon — хост из панели Neon |
 | `DB_PORT`               | Порт PostgreSQL, обычно `5432`                                                                                               |
 | `DB_USERNAME`           | Пользователь БД                                                                                                            |
 | `DB_PASSWORD`           | Пароль БД                                                                                                                        |
 | `DB_NAME`               | Имя базы                                                                                                                          |
+| `REDIS_URL`             | Строка Redis Cloud или Upstash. Если задана, `REDIS_HOST` не используется |
 | `REDIS_HOST`            | Хост Redis. В Docker подменяется на `redis`                                                                          |
 | `REDIS_PORT`            | Порт Redis, обычно `6379`                                                                                                    |
 | `REDIS_PASSWORD`        | Пароль Redis. Пусто, если пароля нет                                                                             |
@@ -167,9 +170,10 @@ curl -X POST http://localhost:3000/api/auth/login ^
 
 ## Деплой
 
-- **База:** проект в [Neon](https://neon.tech). В переменные Render кладутся `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` из connection string. Для Neon нужен `NODE_ENV=production`: приложение тогда включает SSL.
-- **Медиа:** изображения товаров — URL из [Cloudinary](https://cloudinary.com). Ключи — три переменные `CLOUDINARY_*`.
-- **Приложение:** Web Service на [Render](https://render.com) из `Dockerfile` (финальная стадия `production`, процесс от пользователя `node`). Redis на Render или в Redis Cloud, его хост — в `REDIS_HOST`.
+- **База:** проект в [Neon](https://neon.tech). В Render кладётся `DATABASE_URL` целиком и `DB_SSL=true`. Отдельные `DB_HOST` / `DB_PASSWORD` нужны только если строки нет.
+- **Кэш:** [Upstash](https://upstash.com) или Redis Cloud, строка `rediss://...` в `REDIS_URL`.
+- **Медиа:** изображения товаров — URL из [Cloudinary](https://cloudinary.com). Ключи — три переменные `CLOUDINARY_*`. Загрузка файла админом: `POST /api/products/upload`.
+- **Приложение:** Web Service на [Render](https://render.com) из `Dockerfile` (финальная стадия `production`, процесс от пользователя `node`), ветка `dev`. Порт берётся из переменной `PORT`, которую Render задаёт сам.
 - **Фронтенд:** `CORS_ORIGIN` равен origin клиентского приложения.
 - **Swagger на публичном API:** `https://<ваш-сервис>.onrender.com/api-docs`
 

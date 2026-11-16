@@ -10,17 +10,37 @@ import { CartModule } from './cart/cart.module';
 import { LoggerMiddleware } from './shared/middlewares/logger.middleware';
 import { HealthModule } from './health/health.module';
 import { BootstrapModule } from './shared/bootstrap.module';
+import { postgresConnectionFromEnv } from './shared/config/postgres.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        DB_HOST: Joi.string().required(),
+        DATABASE_URL: Joi.string().optional().allow(''),
+        DB_HOST: Joi.string().when('DATABASE_URL', {
+          is: Joi.string().min(1),
+          then: Joi.optional(),
+          otherwise: Joi.required(),
+        }),
         DB_PORT: Joi.number().default(5432),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
+        DB_USERNAME: Joi.string().when('DATABASE_URL', {
+          is: Joi.string().min(1),
+          then: Joi.optional(),
+          otherwise: Joi.required(),
+        }),
+        DB_PASSWORD: Joi.string().when('DATABASE_URL', {
+          is: Joi.string().min(1),
+          then: Joi.optional().allow(''),
+          otherwise: Joi.required(),
+        }),
+        DB_NAME: Joi.string().when('DATABASE_URL', {
+          is: Joi.string().min(1),
+          then: Joi.optional(),
+          otherwise: Joi.required(),
+        }),
+        DB_SSL: Joi.string().valid('true', 'false').optional(),
+        REDIS_URL: Joi.string().optional().allow(''),
         REDIS_HOST: Joi.string().default('localhost'),
         REDIS_PORT: Joi.number().default(6379),
         REDIS_PASSWORD: Joi.string().allow('').optional(),
@@ -41,18 +61,10 @@ import { BootstrapModule } from './shared/bootstrap.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_NAME'),
+        ...postgresConnectionFromEnv(),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
-        ssl: configService.get('NODE_ENV') === 'production' ? {
-          rejectUnauthorized: false
-        } : false,
       }),
       inject: [ConfigService],
     }),

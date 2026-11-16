@@ -12,16 +12,23 @@ export class CatalogCacheService implements OnModuleDestroy {
 
   constructor(configService: ConfigService) {
     const password = configService.get<string>('REDIS_PASSWORD');
-    this.redis = new Redis({
-      host: configService.get<string>('REDIS_HOST', 'localhost'),
-      port: Number(configService.get('REDIS_PORT', 6379)),
-      password: password ? password : undefined,
+    const redisUrl = configService.get<string>('REDIS_URL');
+    const options = {
       maxRetriesPerRequest: 1,
       connectTimeout: 2000,
       enableOfflineQueue: false,
       lazyConnect: false,
-      retryStrategy: (times) => (times > 5 ? null : Math.min(times * 200, 1000)),
-    });
+      retryStrategy: (times: number) =>
+        times > 5 ? null : Math.min(times * 200, 1000),
+    };
+    this.redis = redisUrl
+      ? new Redis(redisUrl, options)
+      : new Redis({
+          host: configService.get<string>('REDIS_HOST', 'localhost'),
+          port: Number(configService.get('REDIS_PORT', 6379)),
+          password: password ? password : undefined,
+          ...options,
+        });
 
     this.redis.on('error', (error) => {
       this.logger.warn(`Redis: ${error.message}`);

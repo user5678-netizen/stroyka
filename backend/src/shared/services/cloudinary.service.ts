@@ -37,6 +37,17 @@ export class CloudinaryService {
     return Promise.all(uploadPromises);
   }
 
+  async uploadFromUrl(url: string): Promise<string> {
+    if (url.includes('res.cloudinary.com')) {
+      return url;
+    }
+
+    const result = await cloudinary.uploader.upload(url, {
+      folder: 'stroyka/products',
+    });
+    return result.secure_url;
+  }
+
   async deleteImage(publicId: string): Promise<void> {
     await cloudinary.uploader.destroy(publicId);
   }
