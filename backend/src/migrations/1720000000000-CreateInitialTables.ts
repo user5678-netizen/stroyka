@@ -25,6 +25,7 @@ export class CreateInitialTables1720000000000 implements MigrationInterface {
       CREATE TABLE products (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         title VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL DEFAULT 'General',
         description TEXT NOT NULL,
         price DECIMAL(10, 2) NOT NULL,
         rating FLOAT DEFAULT 0,

@@ -3,8 +3,25 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { AppDataSource } from './data-source';
+
+async function runProductionMigrations(): Promise<void> {
+  if (process.env.NODE_ENV !== 'production') {
+    return;
+  }
+
+  await AppDataSource.initialize();
+  try {
+    await AppDataSource.runMigrations();
+  } finally {
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+    }
+  }
+}
 
 async function bootstrap() {
+  await runProductionMigrations();
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
