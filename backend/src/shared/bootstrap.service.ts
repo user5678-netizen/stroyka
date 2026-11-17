@@ -7,7 +7,7 @@ import { User, UserRole } from './entities/user.entity';
 import { PromoCode } from './entities/promo-code.entity';
 import { Product } from './entities/product.entity';
 
-/** Same catalog as last-semester frontend (`src/data/products.ts`). */
+/** Каталог демонстрационных товаров. Все изображения лежат в Cloudinary (см. scripts/product-images.json). */
 const FRONTEND_CATALOG: Array<{
   title: string;
   category: string;
@@ -24,9 +24,9 @@ const FRONTEND_CATALOG: Array<{
     rating: 3.5,
     stock_quantity: 80,
     images: [
-      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863678/stroyka/products/exterior-paint-set/1-paint-can.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866570/stroyka/products/exterior-paint-set/2-paint-roller.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866573/stroyka/products/exterior-paint-set/3-painted-interior.jpg',
     ],
     description:
       'Professional-grade exterior paint set designed to withstand harsh weather conditions. This premium paint offers excellent coverage, durability, and color retention. Perfect for residential and commercial applications.',
@@ -38,9 +38,9 @@ const FRONTEND_CATALOG: Array<{
     rating: 4.5,
     stock_quantity: 120,
     images: [
-      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/plywood-sheets/1-plywood-board.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794900110/stroyka/products/plywood-sheets/2-plywood-sheets.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899897/stroyka/products/plywood-sheets/3-plywood-panels.jpg',
     ],
     description:
       'Versatile construction-grade plywood sheets suitable for a wide range of applications. These sheets are engineered for strength and dimensional stability, perfect for subfloors, roofing, walls, and general construction.',
@@ -49,12 +49,12 @@ const FRONTEND_CATALOG: Array<{
     title: 'Premium Cement Bags',
     category: 'Cement & Concrete',
     price: 24.99,
-    rating: 5.0,
+    rating: 5,
     stock_quantity: 200,
     images: [
-      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/premium-cement-bags/1-cement-warehouse.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866575/stroyka/products/premium-cement-bags/2-concrete-site.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899901/stroyka/products/premium-cement-bags/3-cement-bags.jpg',
     ],
     description:
       'High-quality Portland cement bags designed for heavy-duty construction projects. Our premium cement offers exceptional strength, durability, and workability. Ideal for foundations, structural work, and general concrete applications.',
@@ -66,9 +66,9 @@ const FRONTEND_CATALOG: Array<{
     rating: 4.5,
     stock_quantity: 90,
     images: [
-      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863680/stroyka/products/premium-lumber-planks/1-lumber-stack.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866571/stroyka/products/premium-lumber-planks/2-carpentry-workshop.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866572/stroyka/products/premium-lumber-planks/3-miter-saw.jpg',
     ],
     description:
       'Premium kiln-dried lumber planks perfect for all your woodworking and construction needs. These high-grade wooden planks are carefully selected for strength and appearance.',
@@ -77,12 +77,12 @@ const FRONTEND_CATALOG: Array<{
     title: 'Red Clay Bricks',
     category: 'Bricks & Blocks',
     price: 0.89,
-    rating: 4.0,
+    rating: 4,
     stock_quantity: 5000,
     images: [
-      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863681/stroyka/products/red-clay-bricks/1-brick-stack.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866576/stroyka/products/red-clay-bricks/2-brick-renovation.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899965/stroyka/products/red-clay-bricks/3-brick-pallet.jpg',
     ],
     description:
       'Traditional red clay bricks manufactured to the highest standards. These durable bricks are perfect for walls, patios, pathways, and architectural features.',
@@ -91,12 +91,12 @@ const FRONTEND_CATALOG: Array<{
     title: 'Steel I-Beams',
     category: 'Steel & Metal',
     price: 349.99,
-    rating: 5.0,
+    rating: 5,
     stock_quantity: 40,
     images: [
-      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      'https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863682/stroyka/products/steel-i-beams/1-steel-pipes.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866577/stroyka/products/steel-i-beams/2-metalwork.jpg',
+      'https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866579/stroyka/products/steel-i-beams/3-welding.jpg',
     ],
     description:
       'Heavy-duty structural steel I-beams engineered for maximum load-bearing capacity. These professional-grade beams are essential for large construction projects.',

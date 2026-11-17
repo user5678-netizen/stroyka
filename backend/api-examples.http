@@ -1,110 +1,109 @@
-### API Examples for Stroyka Backend
+### Примеры запросов к Stroyka API (VS Code REST Client / IntelliJ HTTP Client)
+### Перед запросами с токеном выполните вход и подставьте access_token.
 
-### 1. Register new user
+### 1. Регистрация покупателя
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
+  "email": "customer@example.com",
   "password": "password123"
 }
 
-### 2. Login user
+### 2. Вход администратора
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
-  "password": "password123"
+  "email": "admin@stroyka.com",
+  "password": "Admin123!"
 }
 
-### 3. Get products with filtering (no auth required)
-GET http://localhost:3000/api/products?page=1&limit=10&min_price=10&max_price=1000&sort_by=price&order=desc
+### 3. Каталог: поиск, фильтры, сортировка, пагинация
+GET http://localhost:3000/api/products?page=1&limit=12&search=cement&min_price=10&max_price=1000&min_rating=4&sort_by=price&order=desc
 
-### 4. Get single product
-GET http://localhost:3000/api/products/123e4567-e89b-12d3-a456-426614174000
+### 4. Один товар
+GET http://localhost:3000/api/products/{{productId}}
 
-### 5. Create product with image URLs (admin only - need JWT token)
+### 5. Создание товара по URL изображений (admin)
 POST http://localhost:3000/api/products
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "title": "Молоток строительный",
-  "description": "Профессиональный молоток для строительных работ",
-  "price": 2499.99,
+  "title": "Краска фасадная",
+  "category": "Paint & Coatings",
+  "description": "Фасадная краска для наружных работ",
+  "price": 45.99,
   "rating": 4.5,
+  "stock_quantity": 80,
   "images": [
-    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer1.jpg",
-    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer2.jpg",
-    "https://res.cloudinary.com/cloudname/image/upload/v1/hammer3.jpg"
-  ],
-  "stock_quantity": 100
+    "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863678/stroyka/products/exterior-paint-set/1-paint-can.jpg",
+    "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866570/stroyka/products/exterior-paint-set/2-paint-roller.jpg",
+    "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866573/stroyka/products/exterior-paint-set/3-painted-interior.jpg"
+  ]
 }
 
-### 5b. Create product with Cloudinary upload (admin only, multipart)
-POST http://localhost:3000/api/products/upload
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+### 6. Создание товара с загрузкой файлов (admin, multipart)
+### В REST Client удобнее через curl:
+### curl -X POST http://localhost:3000/api/products/upload \
+###   -H "Authorization: Bearer <token>" \
+###   -F "title=Краска фасадная" -F "category=Paint & Coatings" \
+###   -F "description=Фасадная краска" -F "price=45.99" \
+###   -F "images=@1.jpg" -F "images=@2.jpg" -F "images=@3.jpg"
 
-------WebKitFormBoundary
-Content-Disposition: form-data; name="title"
-
-Молоток строительный
-------WebKitFormBoundary
-Content-Disposition: form-data; name="description"
-
-Профессиональный молоток
-------WebKitFormBoundary
-Content-Disposition: form-data; name="price"
-
-2499.99
-------WebKitFormBoundary
-Content-Disposition: form-data; name="stock_quantity"
-
-100
-------WebKitFormBoundary
-Content-Disposition: form-data; name="images"; filename="1.jpg"
-Content-Type: image/jpeg
-
-< ./fixtures/1.jpg
-------WebKitFormBoundary
-Content-Disposition: form-data; name="images"; filename="2.jpg"
-Content-Type: image/jpeg
-
-< ./fixtures/2.jpg
-------WebKitFormBoundary
-Content-Disposition: form-data; name="images"; filename="3.jpg"
-Content-Type: image/jpeg
-
-< ./fixtures/3.jpg
-------WebKitFormBoundary--
-
-### 6. Get user cart (requires auth)
-GET http://localhost:3000/api/cart
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
-
-### 7. Add item to cart
-POST http://localhost:3000/api/cart/items
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+### 7. Обновление товара (admin)
+PUT http://localhost:3000/api/products/{{productId}}
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
-  "product_id": "123e4567-e89b-12d3-a456-426614174000",
+  "price": 42.5,
+  "stock_quantity": 60
+}
+
+### 8. Удаление товара (admin). Кэш каталога сбрасывается, позиции корзин удаляются.
+DELETE http://localhost:3000/api/products/{{productId}}
+Authorization: Bearer {{adminToken}}
+
+### 9. Корзина
+GET http://localhost:3000/api/cart
+Authorization: Bearer {{customerToken}}
+
+### 10. Добавить товар в корзину
+POST http://localhost:3000/api/cart/items
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "product_id": "{{productId}}",
   "quantity": 2
 }
 
-### 8. Apply promo code
+### 11. Изменить количество
+PATCH http://localhost:3000/api/cart/items/{{cartItemId}}
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+  "quantity": 3
+}
+
+### 12. Удалить позицию
+DELETE http://localhost:3000/api/cart/items/{{cartItemId}}
+Authorization: Bearer {{customerToken}}
+
+### 13. Промокод SAVE10 (-10%)
 POST http://localhost:3000/api/cart/apply-promo
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
   "code": "SAVE10"
 }
 
-### 9. Health check
+### 14. Проверка состояния и документация
 GET http://localhost:3000/health
 
-### 10. Swagger documentation
+###
 GET http://localhost:3000/api-docs

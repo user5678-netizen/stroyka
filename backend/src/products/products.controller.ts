@@ -8,7 +8,6 @@ import {
   Query,
   Body,
   UseGuards,
-  Req,
   ParseUUIDPipe,
   UploadedFiles,
   UseInterceptors,
@@ -34,15 +33,16 @@ import {
   ProductResponseDto,
 } from './dto/products.dto';
 import { CreateProductWithFilesDto } from './dto/create-product-with-files.dto';
-import { User, UserRole } from '../shared/entities/user.entity';
+import { UserRole } from '../shared/entities/user.entity';
 import { Roles } from '../shared/decorators/roles.decorator';
 import { RolesGuard } from '../shared/guards/roles.guard';
-import { CloudinaryService } from '../shared/services/cloudinary.service';
+import { CloudinaryService, PRODUCTS_FOLDER } from '../shared/services/cloudinary.service';
 import {
   imageFileFilter,
   limits,
   validateUploadedFiles,
 } from '../shared/utils/file-validation.utils';
+import { slugify } from '../shared/utils/slugify';
 
 @ApiTags('Products')
 @Controller('api/products')
@@ -94,12 +94,8 @@ export class ProductsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
   async create(
     @Body() createProductDto: CreateProductDto,
-    @Req() req: { user: User },
   ): Promise<ProductResponseDto> {
-    const product = await this.productsService.create(
-      createProductDto,
-      req.user,
-    );
+    const product = await this.productsService.create(createProductDto);
     return this.toResponse(product);
   }
 
@@ -145,30 +141,28 @@ export class ProductsController {
   async createWithUpload(
     @Body() dto: CreateProductWithFilesDto,
     @UploadedFiles() files: Express.Multer.File[],
-    @Req() req: { user: User },
   ): Promise<ProductResponseDto> {
     validateUploadedFiles(files);
 
     let imageUrls: string[];
     try {
-      imageUrls = await this.cloudinaryService.uploadMultipleImages(files);
+      const folder = `${PRODUCTS_FOLDER}/${slugify(dto.title) || 'product'}`;
+      imageUrls = await this.cloudinaryService.uploadMultipleImages(files, folder);
     } catch (error) {
       throw new BadRequestException(
         `Cloudinary upload failed: ${(error as Error).message}`,
       );
     }
 
-    const product = await this.productsService.create(
-      {
-        title: dto.title,
-        description: dto.description,
-        price: dto.price,
-        rating: dto.rating ?? 0,
-        stock_quantity: dto.stock_quantity ?? 0,
-        images: imageUrls,
-      },
-      req.user,
-    );
+    const product = await this.productsService.create({
+      title: dto.title,
+      category: dto.category ?? 'General',
+      description: dto.description,
+      price: dto.price,
+      rating: dto.rating ?? 0,
+      stock_quantity: dto.stock_quantity ?? 0,
+      images: imageUrls,
+    });
 
     return this.toResponse(product);
   }
@@ -212,13 +206,8 @@ export class ProductsController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
-    @Req() req: { user: User },
   ): Promise<ProductResponseDto> {
-    const product = await this.productsService.update(
-      id,
-      updateProductDto,
-      req.user,
-    );
+    const product = await this.productsService.update(id, updateProductDto);
     return this.toResponse(product);
   }
 
@@ -230,10 +219,7 @@ export class ProductsController {
   @ApiResponse({ status: 204, description: 'Product deleted successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin only' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  async delete(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: { user: User },
-  ): Promise<void> {
-    return this.productsService.delete(id, req.user);
+  async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+    return this.productsService.delete(id);
   }
 }

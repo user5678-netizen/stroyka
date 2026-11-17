@@ -8,11 +8,12 @@ export const products: Product[] = [
     rating: 3.5,
     category: "Paint & Coatings",
     imageUrl:
-      "https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWludCUyMGNhbnMlMjBjb25zdHJ1Y3Rpb24lMjBzdXBwbGllc3xlbnwxfHx8fDE3NzExODUyNzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863678/stroyka/products/exterior-paint-set/1-paint-can.jpg",
     images: [
-      "https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWludCUyMGNhbnMlMjBjb25zdHJ1Y3Rpb24lMjBzdXBwbGllc3xlbnwxfHx8fDE3NzExODUyNzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWludCUyMGNhbnMlMjBjb25zdHJ1Y3Rpb24lMjBzdXBwbGllc3xlbnwxfHx8fDE3NzExODUyNzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1673297821205-e0575bbc2ab7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYWludCUyMGNhbnMlMjBjb25zdHJ1Y3Rpb24lMjBzdXBwbGllc3xlbnwxfHx8fDE3NzExODUyNzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863678/stroyka/products/exterior-paint-set/1-paint-can.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866570/stroyka/products/exterior-paint-set/2-paint-roller.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866573/stroyka/products/exterior-paint-set/3-painted-interior.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866578/stroyka/products/exterior-paint-set/4-painted-interior-alt.jpg",
     ],
     description:
       "Professional-grade exterior paint set designed to withstand harsh weather conditions. This premium paint offers excellent coverage, durability, and color retention. Perfect for residential and commercial applications.",
@@ -32,11 +33,11 @@ export const products: Product[] = [
     rating: 4.5,
     category: "Wood & Lumber",
     imageUrl:
-      "https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwbHl3b29kJTIwc2hlZXRzJTIwY29uc3RydWN0aW9uJTIwbWF0ZXJpYWx8ZW58MXx8fHwxNzcxMDczNjEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/plywood-sheets/1-plywood-board.jpg",
     images: [
-      "https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwbHl3b29kJTIwc2hlZXRzJTIwY29uc3RydWN0aW9uJTIwbWF0ZXJpYWx8ZW58MXx8fHwxNzcxMDczNjEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwbHl3b29kJTIwc2hlZXRzJTIwY29uc3RydWN0aW9uJTIwbWF0ZXJpYWx8ZW58MXx8fHwxNzcxMDczNjEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1704167674713-649193461719?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwbHl3b29kJTIwc2hlZXRzJTIwY29uc3RydWN0aW9uJTIwbWF0ZXJpYWx8ZW58MXx8fHwxNzcxMDczNjEzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/plywood-sheets/1-plywood-board.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794900110/stroyka/products/plywood-sheets/2-plywood-sheets.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899897/stroyka/products/plywood-sheets/3-plywood-panels.jpg",
     ],
     description:
       "Versatile construction-grade plywood sheets suitable for a wide range of applications. These sheets are engineered for strength and dimensional stability, perfect for subfloors, roofing, walls, and general construction.",
@@ -56,11 +57,11 @@ export const products: Product[] = [
     rating: 5.0,
     category: "Cement & Concrete",
     imageUrl:
-      "https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBjZW1lbnQlMjBiYWdzJTIwd2FyZWhvdXNlfGVufDF8fHx8MTc3MTE4NDE1OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/premium-cement-bags/1-cement-warehouse.jpg",
     images: [
-      "https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBjZW1lbnQlMjBiYWdzJTIwd2FyZWhvdXNlfGVufDF8fHx8MTc3MTE4NDE1OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBjZW1lbnQlMjBiYWdzJTIwd2FyZWhvdXNlfGVufDF8fHx8MTc3MTE4NDE1OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1718117075248-3d3c3cd65264?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBjZW1lbnQlMjBiYWdzJTIwd2FyZWhvdXNlfGVufDF8fHx8MTc3MTE4NDE1OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/premium-cement-bags/1-cement-warehouse.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866575/stroyka/products/premium-cement-bags/2-concrete-site.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899901/stroyka/products/premium-cement-bags/3-cement-bags.jpg",
     ],
     description:
       "High-quality Portland cement bags designed for heavy-duty construction projects. Our premium cement offers exceptional strength, durability, and workability. Ideal for foundations, structural work, and general concrete applications. Each bag contains precisely measured and tested cement that meets international quality standards.",
@@ -80,11 +81,11 @@ export const products: Product[] = [
     rating: 4.5,
     category: "Wood & Lumber",
     imageUrl:
-      "https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidWlsZGluZyUyMG1hdGVyaWFscyUyMHdvb2QlMjBsdW1iZXIlMjBwbGFua3N8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863680/stroyka/products/premium-lumber-planks/1-lumber-stack.jpg",
     images: [
-      "https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidWlsZGluZyUyMG1hdGVyaWFscyUyMHdvb2QlMjBsdW1iZXIlMjBwbGFua3N8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidWlsZGluZyUyMG1hdGVyaWFscyUyMHdvb2QlMjBsdW1iZXIlMjBwbGFua3N8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1764025390519-1ccc15d719a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidWlsZGluZyUyMG1hdGVyaWFscyUyMHdvb2QlMjBsdW1iZXIlMjBwbGFua3N8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863680/stroyka/products/premium-lumber-planks/1-lumber-stack.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866571/stroyka/products/premium-lumber-planks/2-carpentry-workshop.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866572/stroyka/products/premium-lumber-planks/3-miter-saw.jpg",
     ],
     description:
       "Premium kiln-dried lumber planks perfect for all your woodworking and construction needs. These high-grade wooden planks are carefully selected for strength and appearance. Suitable for framing, decking, furniture making, and various carpentry projects.",
@@ -104,11 +105,11 @@ export const products: Product[] = [
     rating: 4.0,
     category: "Bricks & Blocks",
     imageUrl:
-      "https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBicmlja3MlMjByZWQlMjBzdGFja3xlbnwxfHx8fDE3NzExODUyNzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863681/stroyka/products/red-clay-bricks/1-brick-stack.jpg",
     images: [
-      "https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBicmlja3MlMjByZWQlMjBzdGFja3xlbnwxfHx8fDE3NzExODUyNzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBicmlja3MlMjByZWQlMjBzdGFja3xlbnwxfHx8fDE3NzExODUyNzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1761358270922-5a4df4ab9782?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25zdHJ1Y3Rpb24lMjBicmlja3MlMjByZWQlMjBzdGFja3xlbnwxfHx8fDE3NzExODUyNzJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863681/stroyka/products/red-clay-bricks/1-brick-stack.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866576/stroyka/products/red-clay-bricks/2-brick-renovation.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899965/stroyka/products/red-clay-bricks/3-brick-pallet.jpg",
     ],
     description:
       "Traditional red clay bricks manufactured to the highest standards. These durable bricks are perfect for walls, patios, pathways, and architectural features. Fire-hardened for exceptional strength and weather resistance.",
@@ -128,11 +129,11 @@ export const products: Product[] = [
     rating: 5.0,
     category: "Steel & Metal",
     imageUrl:
-      "https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGVlbCUyMGJlYW1zJTIwY29uc3RydWN0aW9uJTIwbWV0YWx8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863682/stroyka/products/steel-i-beams/1-steel-pipes.jpg",
     images: [
-      "https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGVlbCUyMGJlYW1zJTIwY29uc3RydWN0aW9uJTIwbWV0YWx8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGVlbCUyMGJlYW1zJTIwY29uc3RydWN0aW9uJTIwbWV0YWx8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-      "https://images.unsplash.com/photo-1707236527163-bd3478178466?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdGVlbCUyMGJlYW1zJTIwY29uc3RydWN0aW9uJTIwbWV0YWx8ZW58MXx8fHwxNzcxMTg1MjcyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863682/stroyka/products/steel-i-beams/1-steel-pipes.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866577/stroyka/products/steel-i-beams/2-metalwork.jpg",
+      "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866579/stroyka/products/steel-i-beams/3-welding.jpg",
     ],
     description:
       "Heavy-duty structural steel I-beams engineered for maximum load-bearing capacity. These professional-grade beams are essential for large construction projects, building frames, and structural support applications.",

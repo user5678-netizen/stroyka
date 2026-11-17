@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-11-17T07:21:51.918Z",
+  "products": [
+    {
+      "slug": "exterior-paint-set",
+      "count": 4,
+      "images": [
+        {
+          "public_id": "stroyka/products/exterior-paint-set/1-paint-can",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863678/stroyka/products/exterior-paint-set/1-paint-can.jpg",
+          "width": 1080,
+          "height": 720
+        },
+        {
+          "public_id": "stroyka/products/exterior-paint-set/2-paint-roller",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866570/stroyka/products/exterior-paint-set/2-paint-roller.jpg",
+          "width": 1200,
+          "height": 838
+        },
+        {
+          "public_id": "stroyka/products/exterior-paint-set/3-painted-interior",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866573/stroyka/products/exterior-paint-set/3-painted-interior.jpg",
+          "width": 1200,
+          "height": 1200
+        },
+        {
+          "public_id": "stroyka/products/exterior-paint-set/4-painted-interior-alt",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866578/stroyka/products/exterior-paint-set/4-painted-interior-alt.jpg",
+          "width": 1200,
+          "height": 800
+        }
+      ]
+    },
+    {
+      "slug": "plywood-sheets",
+      "count": 3,
+      "images": [
+        {
+          "public_id": "stroyka/products/plywood-sheets/1-plywood-board",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/plywood-sheets/1-plywood-board.jpg",
+          "width": 1080,
+          "height": 720
+        },
+        {
+          "public_id": "stroyka/products/plywood-sheets/2-plywood-sheets",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794900110/stroyka/products/plywood-sheets/2-plywood-sheets.jpg",
+          "width": 1024,
+          "height": 684
+        },
+        {
+          "public_id": "stroyka/products/plywood-sheets/3-plywood-panels",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899897/stroyka/products/plywood-sheets/3-plywood-panels.jpg",
+          "width": 1920,
+          "height": 1440
+        }
+      ]
+    },
+    {
+      "slug": "premium-cement-bags",
+      "count": 3,
+      "images": [
+        {
+          "public_id": "stroyka/products/premium-cement-bags/1-cement-warehouse",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863679/stroyka/products/premium-cement-bags/1-cement-warehouse.jpg",
+          "width": 1080,
+          "height": 1512
+        },
+        {
+          "public_id": "stroyka/products/premium-cement-bags/2-concrete-site",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866575/stroyka/products/premium-cement-bags/2-concrete-site.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "public_id": "stroyka/products/premium-cement-bags/3-cement-bags",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899901/stroyka/products/premium-cement-bags/3-cement-bags.jpg",
+          "width": 1892,
+          "height": 1432
+        }
+      ]
+    },
+    {
+      "slug": "premium-lumber-planks",
+      "count": 3,
+      "images": [
+        {
+          "public_id": "stroyka/products/premium-lumber-planks/1-lumber-stack",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863680/stroyka/products/premium-lumber-planks/1-lumber-stack.jpg",
+          "width": 1080,
+          "height": 720
+        },
+        {
+          "public_id": "stroyka/products/premium-lumber-planks/2-carpentry-workshop",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866571/stroyka/products/premium-lumber-planks/2-carpentry-workshop.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "public_id": "stroyka/products/premium-lumber-planks/3-miter-saw",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866572/stroyka/products/premium-lumber-planks/3-miter-saw.jpg",
+          "width": 1200,
+          "height": 800
+        }
+      ]
+    },
+    {
+      "slug": "red-clay-bricks",
+      "count": 3,
+      "images": [
+        {
+          "public_id": "stroyka/products/red-clay-bricks/1-brick-stack",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863681/stroyka/products/red-clay-bricks/1-brick-stack.jpg",
+          "width": 1080,
+          "height": 1384
+        },
+        {
+          "public_id": "stroyka/products/red-clay-bricks/2-brick-renovation",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866576/stroyka/products/red-clay-bricks/2-brick-renovation.jpg",
+          "width": 1200,
+          "height": 798
+        },
+        {
+          "public_id": "stroyka/products/red-clay-bricks/3-brick-pallet",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794899965/stroyka/products/red-clay-bricks/3-brick-pallet.jpg",
+          "width": 1600,
+          "height": 1244
+        }
+      ]
+    },
+    {
+      "slug": "steel-i-beams",
+      "count": 3,
+      "images": [
+        {
+          "public_id": "stroyka/products/steel-i-beams/1-steel-pipes",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794863682/stroyka/products/steel-i-beams/1-steel-pipes.jpg",
+          "width": 1080,
+          "height": 810
+        },
+        {
+          "public_id": "stroyka/products/steel-i-beams/2-metalwork",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866577/stroyka/products/steel-i-beams/2-metalwork.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        {
+          "public_id": "stroyka/products/steel-i-beams/3-welding",
+          "url": "https://res.cloudinary.com/q9jdrfuj/image/upload/v1794866579/stroyka/products/steel-i-beams/3-welding.jpg",
+          "width": 1200,
+          "height": 800
+        }
+      ]
+    }
+  ]
+}

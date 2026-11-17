@@ -11,9 +11,7 @@ import {
   SortBy,
   SortOrder,
 } from './dto/products.dto';
-import { User } from '../shared/entities/user.entity';
 import { CatalogCacheService } from '../shared/services/catalog-cache.service';
-
 @Injectable()
 export class ProductsService {
   constructor(
@@ -124,10 +122,7 @@ export class ProductsService {
     return product;
   }
 
-  async create(
-    createProductDto: CreateProductDto,
-    user: User,
-  ): Promise<Product> {
+  async create(createProductDto: CreateProductDto): Promise<Product> {
     const product = this.productRepository.create(createProductDto);
     await this.productRepository.save(product);
     await this.catalogCache.invalidateCatalog();
@@ -137,7 +132,6 @@ export class ProductsService {
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
-    user: User,
   ): Promise<Product> {
     const product = await this.findOne(id);
 
@@ -147,7 +141,7 @@ export class ProductsService {
     return product;
   }
 
-  async delete(id: string, user: User): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.findOne(id);
     await this.cartItemRepository.delete({ product_id: id });
     await this.productRepository.delete(id);

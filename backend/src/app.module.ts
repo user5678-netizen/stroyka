@@ -64,7 +64,7 @@ import { postgresConnectionFromEnv } from './shared/config/postgres.config';
         ...postgresConnectionFromEnv(),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: configService.get('NODE_ENV') === 'development',
-        logging: configService.get('NODE_ENV') === 'development',
+        logging: configService.get('DB_LOGGING') === 'true',
       }),
       inject: [ConfigService],
     }),

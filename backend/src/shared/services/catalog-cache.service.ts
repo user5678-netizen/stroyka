@@ -9,6 +9,7 @@ const DEFAULT_TTL_SECONDS = 120;
 export class CatalogCacheService implements OnModuleDestroy {
   private readonly logger = new Logger(CatalogCacheService.name);
   private readonly redis: Redis;
+  private connectionWarningShown = false;
 
   constructor(configService: ConfigService) {
     const password = configService.get<string>('REDIS_PASSWORD');
@@ -31,7 +32,13 @@ export class CatalogCacheService implements OnModuleDestroy {
         });
 
     this.redis.on('error', (error) => {
-      this.logger.warn(`Redis: ${error.message}`);
+      if (this.connectionWarningShown) {
+        return;
+      }
+      this.connectionWarningShown = true;
+      this.logger.warn(
+        `Redis недоступен, кэш каталога отключён: ${error.message}`,
+      );
     });
   }
 
@@ -51,7 +58,7 @@ export class CatalogCacheService implements OnModuleDestroy {
       const raw = await this.redis.get(key);
       return raw ? (JSON.parse(raw) as T) : null;
     } catch (error) {
-      this.logger.warn(`Cache read failed: ${(error as Error).message}`);
+      this.logger.debug(`Cache read failed: ${(error as Error).message}`);
       return null;
     }
   }
@@ -60,7 +67,7 @@ export class CatalogCacheService implements OnModuleDestroy {
     try {
       await this.redis.set(key, JSON.stringify(value), 'EX', ttlSeconds);
     } catch (error) {
-      this.logger.warn(`Cache write failed: ${(error as Error).message}`);
+      this.logger.debug(`Cache write failed: ${(error as Error).message}`);
     }
   }
 
@@ -81,11 +88,15 @@ export class CatalogCacheService implements OnModuleDestroy {
         }
       } while (cursor !== '0');
     } catch (error) {
-      this.logger.warn(`Cache invalidation failed: ${(error as Error).message}`);
+      this.logger.debug(`Cache invalidation failed: ${(error as Error).message}`);
     }
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.redis.quit();
+    try {
+      await this.redis.quit();
+    } catch {
+      this.redis.disconnect();
+    }
   }
 }

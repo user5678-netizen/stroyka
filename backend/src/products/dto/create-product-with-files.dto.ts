@@ -13,6 +13,11 @@ export class CreateProductWithFilesDto {
   @IsString()
   title: string;
 
+  @ApiPropertyOptional({ example: 'Отделочные материалы' })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
   @ApiProperty({ example: 'Профессиональный молоток для строительных работ' })
   @IsString()
   description: string;
