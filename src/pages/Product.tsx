@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ImageCarousel } from "../components/ImageCarousel";
@@ -30,7 +30,8 @@ export function Product() {
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { addToCart } = useCart();
+  const { addToCart, loading: cartLoading } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setQuantity(1);
@@ -239,15 +240,19 @@ export function Product() {
               <div className={styles.actions}>
                 <button
                   className={styles.primary}
+                  disabled={cartLoading}
                   type="button"
                   onClick={() => {
-                    void addToCart(product, quantity);
+                    void addToCart(product, quantity).catch(() => {});
                   }}
                 >
                   <CartIcon className={styles.primaryIcon} />
                   Add to Cart
                 </button>
-                <button className={styles.secondary} type="button">
+                <button className={styles.secondary} type="button" disabled={cartLoading}
+                  onClick={() => {
+                    void addToCart(product, quantity).then(() => navigate("/checkout")).catch(() => {});
+                  }}>
                   Buy Now
                 </button>
               </div>

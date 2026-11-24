@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import {
@@ -15,17 +15,16 @@ function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
 }
 
-const TAX_RATE = 0.08;
-
 type CartSidebarProps = {
   subtotal: number;
-  tax: number;
   discount: number;
+  discountPercentage: number;
   total: number;
   checkoutDisabled?: boolean;
 };
 
-function CartSidebar({ subtotal, tax, discount, total, checkoutDisabled }: CartSidebarProps) {
+function CartSidebar({ subtotal, discount, discountPercentage, total, checkoutDisabled }: CartSidebarProps) {
+  const navigate = useNavigate();
   return (
     <div className={styles.sidebar}>
       <aside className={styles.summary} aria-label="Order summary">
@@ -34,13 +33,9 @@ function CartSidebar({ subtotal, tax, discount, total, checkoutDisabled }: CartS
           <span>Subtotal</span>
           <strong>{formatPrice(subtotal)}</strong>
         </div>
-        <div className={styles.summaryRow}>
-          <span>Tax (8%)</span>
-          <strong>{formatPrice(tax)}</strong>
-        </div>
         {discount > 0 ? (
           <div className={`${styles.summaryRow} ${styles.discountRow}`}>
-            <span>Discount (10%)</span>
+            <span>Discount ({discountPercentage}%)</span>
             <strong>-{formatPrice(discount)}</strong>
           </div>
         ) : null}
@@ -48,7 +43,7 @@ function CartSidebar({ subtotal, tax, discount, total, checkoutDisabled }: CartS
           <span>Total</span>
           <strong>{formatPrice(total)}</strong>
         </div>
-        <button className={styles.checkout} type="button" disabled={checkoutDisabled}>
+        <button className={styles.checkout} type="button" disabled={checkoutDisabled} onClick={() => navigate("/checkout")}>
           Proceed to Checkout
           <CheckoutArrowIcon className={styles.checkoutArrowIcon} />
         </button>
@@ -91,6 +86,9 @@ export function Cart() {
     items,
     subtotal,
     discount,
+    discountPercentage,
+    total,
+    ready,
     promoCode,
     setQuantity,
     removeFromCart,
@@ -110,8 +108,6 @@ export function Cart() {
   }, [promoCode]);
 
   const isEmpty = items.length === 0;
-  const tax = subtotal > 0 ? subtotal * TAX_RATE : 0;
-  const total = Math.max(0, subtotal + tax - discount);
 
   const handleApplyPromo = async () => {
     const normalized = promoInput.trim().toUpperCase();
@@ -137,7 +133,9 @@ export function Cart() {
         <div className={styles.container}>
           <h1 className={styles.visuallyHidden}>Shopping Cart</h1>
 
-          {isEmpty ? (
+          {!ready ? (
+            <p role="status">Loading cart…</p>
+          ) : isEmpty ? (
             <div className={styles.emptyWrapper}>
               <section aria-label="Empty cart">
                 <div className={styles.emptyCard}>
@@ -192,7 +190,7 @@ export function Cart() {
                               className={styles.qtyBtn}
                               disabled={loading}
                               onClick={() => {
-                                void setQuantity(item.product.id, item.quantity - 1);
+                                void setQuantity(item.product.id, item.quantity - 1).catch(() => {});
                               }}
                               aria-label="Decrease quantity"
                             >
@@ -204,7 +202,7 @@ export function Cart() {
                               className={styles.qtyBtn}
                               disabled={loading}
                               onClick={() => {
-                                void setQuantity(item.product.id, item.quantity + 1);
+                                void setQuantity(item.product.id, item.quantity + 1).catch(() => {});
                               }}
                               aria-label="Increase quantity"
                             >
@@ -220,7 +218,7 @@ export function Cart() {
                               className={styles.trashBtn}
                               disabled={loading}
                               onClick={() => {
-                                void removeFromCart(item.product.id);
+                                void removeFromCart(item.product.id).catch(() => {});
                               }}
                               aria-label={`Remove ${item.product.name} from cart`}
                             >
@@ -270,8 +268,8 @@ export function Cart() {
 
               <CartSidebar
                 subtotal={subtotal}
-                tax={tax}
                 discount={discount}
+                discountPercentage={discountPercentage}
                 total={total}
                 checkoutDisabled={loading}
               />

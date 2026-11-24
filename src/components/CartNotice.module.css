@@ -10,7 +10,7 @@
 }
 
 .toastPanel {
-  pointer-events: auto;
+  pointer-events: none;
   min-width: 280px;
   max-width: min(92vw, 520px);
   border-radius: 14px;

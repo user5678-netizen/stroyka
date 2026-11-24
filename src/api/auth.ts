@@ -59,7 +59,7 @@ async function loginWithStoredGuest(): Promise<AuthResponse | null> {
 }
 
 /** Ensures a customer JWT exists so cart endpoints work without a login screen. */
-export async function ensureCustomerSession(): Promise<AuthUser> {
+async function restoreCustomerSession(): Promise<AuthUser> {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   if (token) {
     try {
@@ -79,4 +79,16 @@ export async function ensureCustomerSession(): Promise<AuthUser> {
 
   const registered = await registerGuest();
   return registered.user;
+}
+
+// Share initialization between concurrent cart requests and React StrictMode effects.
+let pendingSession: Promise<AuthUser> | null = null;
+
+export function ensureCustomerSession(): Promise<AuthUser> {
+  if (!pendingSession) {
+    pendingSession = restoreCustomerSession().finally(() => {
+      pendingSession = null;
+    });
+  }
+  return pendingSession;
 }

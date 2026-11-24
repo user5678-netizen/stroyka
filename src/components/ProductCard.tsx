@@ -11,7 +11,7 @@ function formatPrice(value: number) {
 }
 
 export function ProductCard({ product }: { product: Product }) {
-  const { addToCart } = useCart();
+  const { addToCart, loading } = useCart();
 
   return (
     <article className={styles.card}>
@@ -37,8 +37,9 @@ export function ProductCard({ product }: { product: Product }) {
         <button
           className={styles.cta}
           type="button"
+          disabled={loading}
           onClick={() => {
-            void addToCart(product, 1);
+            void addToCart(product, 1).catch(() => {});
           }}
         >
           <CartIcon className={styles.ctaIcon} />
